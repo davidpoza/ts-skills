@@ -1,0 +1,30 @@
+schema: sdd-incremental
+
+context: |
+  Idioma: Español
+  Todos los artefactos (impact, proposal, specs, design, tasks) deben escribirse en español.
+  Mantén en inglés los encabezados estructurales que OpenSpec valida
+  (## Why, ## What Changes, ## Capabilities, ## Purpose, ## ADDED/MODIFIED/REMOVED/RENAMED Requirements,
+  ### Requirement:, #### Scenario:) y las palabras clave SHALL/MUST y WHEN/THEN.
+
+  # Añade aquí solo restricciones que el agente no pueda deducir leyendo el código. Ejemplo:
+  # Stack: Spring Boot (backend), Angular (frontend)
+  # Tests: JUnit 5 + Spring Boot Test; Jasmine/Karma en el frontend
+
+# Reglas por artefacto (opcional). Las reglas fuertes viven en el schema sdd-incremental;
+# usa esto para matices del proyecto.
+rules:
+  specs:
+    - Las specs describen reglas de negocio observables, nunca clases, métodos ni frameworks
+  tasks:
+    - Cada tarea es un incremento de comportamiento pequeño (un ciclo TDD), nunca una capa técnica
+
+# Red de seguridad por si alguien usa /opsx:apply en lugar de /sdd-pair.
+operations:
+  apply:
+    guidance:
+      - Implement only ONE pending task per run, one TDD cycle at a time (red → minimum code → green), then stop and wait for approval
+      - List the task's tests (names + where they run) and wait for approval before writing them
+      - Stop before any design decision not covered by design.md or any behavior not in the specs
+      - Never change, skip or delete a test to make it pass; never edit specs to match the code
+      - Never commit; suggest the commit message instead
