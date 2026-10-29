@@ -2,14 +2,14 @@
 # Instala el schema sdd-incremental, la config de ejemplo y los skills sdd-* en un proyecto
 # que ya usa OpenSpec. Idempotente: no toca los skills openspec-* ni una config.yaml existente.
 #
-# Uso: scripts/install.sh <ruta-proyecto> [--tools claude,codex,github-copilot]
+# Uso: scripts/install.sh <ruta-proyecto> [--tools claude,codex,github-copilot,opencode]
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SCHEMA=sdd-incremental
 
 usage() {
-  echo "Uso: $0 <ruta-proyecto> [--tools claude,codex,github-copilot]" >&2
+  echo "Uso: $0 <ruta-proyecto> [--tools claude,codex,github-copilot,opencode]" >&2
   exit 1
 }
 
@@ -54,7 +54,8 @@ for tool in "${TOOL_LIST[@]}"; do
     claude) dir=".claude/skills" ;;
     codex) dir=".agents/skills" ;;
     github-copilot) dir=".github/skills" ;;
-    *) echo "! Herramienta desconocida: $tool (usa claude, codex o github-copilot)" >&2; continue ;;
+    opencode) dir=".opencode/skills" ;;
+    *) echo "! Herramienta desconocida: $tool (usa claude, codex, github-copilot u opencode)" >&2; continue ;;
   esac
   mkdir -p "$TARGET/$dir"
   for skill in "$REPO_DIR"/skills/*/; do

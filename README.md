@@ -96,7 +96,7 @@ el supervisor no tiene que aprobarlo.
 | `openspec/config.example.yaml` | Artefactos en español (encabezados validados por OpenSpec en inglés) y `operations.apply.guidance` como red de seguridad si alguien usa `/opsx:apply`. |
 | `skills/sdd-pair/` | El núcleo: pair programming sobre una tarea de `tasks.md`. Propone la lista de tests, hace un ciclo TDD y para. Nunca commitea ni cambia specs para justificar el código. Sustituye a `/opsx:apply`. |
 | `skills/sdd-backlog/` | Trocea una idea en 10–15 historias verticales, cada una un change pequeño. Consulta antes las specs vigentes. |
-| `scripts/install.sh` | Instala todo en un proyecto. |
+| `scripts/install.sh`, `scripts/install.ps1` | Instalan todo en un proyecto (bash para Linux/macOS/Git Bash; PowerShell para Windows). |
 
 No se modifica OpenSpec: se usa su CLI oficial y sus puntos de extensión documentados (schemas propios, `config.yaml`). Los skills `openspec-*` siguen siendo de OpenSpec y `openspec update` los regenera sin tocar los `sdd-*`.
 
@@ -106,10 +106,24 @@ Requiere Node ≥ 20.19.
 
 ```bash
 cd mi-proyecto
-npx @fission-ai/openspec@latest init --tools claude,codex,github-copilot
-/ruta/a/ts-skills/scripts/install.sh . --tools claude,codex,github-copilot
+npx @fission-ai/openspec@latest init --tools claude,codex,github-copilot,opencode
+/ruta/a/ts-skills/scripts/install.sh . --tools claude,codex,github-copilot,opencode
 npx @fission-ai/openspec@latest schema validate sdd-incremental
 ```
+
+Usa en `--tools` solo los agentes que necesites, y los mismos en los dos comandos.
+
+**En Windows** usa `install.ps1` desde PowerShell (Windows PowerShell 5.1 o PowerShell 7):
+
+```powershell
+cd C:\Users\<usuario>\dev\mi-proyecto
+npx @fission-ai/openspec@latest init --tools opencode
+powershell -ExecutionPolicy Bypass -File C:\Users\<usuario>\dev\ts-skills\scripts\install.ps1 . -Tools opencode
+```
+
+- `-Tools` acepta varios agentes separados por comas: `-Tools claude,opencode`.
+- `-ExecutionPolicy Bypass` solo afecta a esa ejecución; hace falta porque Windows bloquea los scripts `.ps1` por defecto.
+- Alternativa: `install.sh` desde Git Bash o WSL, con rutas tipo `/c/Users/<usuario>/dev/...`.
 
 Después, añade el stack y las restricciones del proyecto en `openspec/config.yaml` (`context`).
 
@@ -122,8 +136,9 @@ Después, añade el stack y las restricciones del proyecto en `openspec/config.y
 | Claude Code | `.claude/skills/` | `/sdd-pair`, `/sdd-backlog` |
 | Codex | `.agents/skills/` | `$sdd-pair`, `$sdd-backlog` |
 | GitHub Copilot | `.github/skills/` | skill `sdd-pair`, `sdd-backlog` |
+| OpenCode | `.opencode/skills/` | pide al agente que use el skill `sdd-pair` / `sdd-backlog`; los comandos de OpenSpec son `/opsx-propose`, `/opsx-explore`… |
 
-Los skills son de invocación manual (`disable-model-invocation: true`): nunca se activan solos.
+En Claude Code los skills son de invocación manual (`disable-model-invocation: true`) y nunca se activan solos. Los demás agentes ignoran ese campo y pueden cargarlos por su cuenta si el contexto encaja; invócalos explícitamente.
 
 ## Principios
 
