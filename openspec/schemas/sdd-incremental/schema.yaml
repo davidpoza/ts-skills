@@ -382,4 +382,9 @@ apply:
       skipped or deleted to pass; two attempts failed to reach green; the step
       exceeds ~50 lines or 3 files (propose splitting the task); the code
       contradicts an approved spec.
+    - Every function or method written or touched must have a cognitive
+      complexity of 15 or less (SonarSource definition) whenever possible.
+      Measure it with the project's analyzer when configured. If it ends up
+      above 15, report it and propose a refactor (tests green, separate
+      step); it stays above 15 only with the user's explicit approval.
     - Never edit specs to match the code. Never commit.

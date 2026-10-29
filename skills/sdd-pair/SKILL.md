@@ -65,6 +65,16 @@ Change anything or continue with "<next test>"?
 - The expected value comes from the spec scenario, **never computed with the same logic as the code**.
 - Test behavior through the public interface, not internal details.
 
+### Complexity rule
+
+Every function or method you write or touch must have a **cognitive complexity of 15 or less** (SonarSource definition) whenever possible.
+
+- Measure it with the project's linter or analyzer when one is configured (SonarQube/SonarLint, `sonarjs/cognitive-complexity`, PMD `CognitiveComplexity`, `complexipy`…). Otherwise estimate it with the SonarSource rules and say it's an estimate.
+- Keep the "minimum code" simple from the start: early returns and guard clauses over nested conditionals, small named helpers over long branches.
+- If a function ends up above 15 after green, don't move on to the next test: report it in the micro message (`Complexity: <function> = <n> > 15`) and propose the refactor that brings it down. The refactor is its own step, with tests green and no new functionality.
+- A function may stay above 15 only with my explicit approval and a stated reason (for example, a flat mapping that reads worse when split).
+- If touching existing code above 15 is required, mention it, but don't refactor it beyond what the task needs unless I ask.
+
 ### Spec rules
 
 - Approved specs (`openspec/specs/` and this change's delta specs) are the contract. **Never edit a spec so it matches what the code does.**
