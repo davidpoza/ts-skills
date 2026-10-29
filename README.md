@@ -24,12 +24,12 @@ flowchart TD
     clara -->|Sí| propose["/opsx:propose &lt;descripción&gt;"]
 
     subgraph plan ["Planificación (OpenSpec)"]
-        propose --> impact["impact.md<br/>reglas afectadas, conflictos, preguntas"]
+        propose --> impact["impact.md<br/>reglas afectadas, conflictos,<br/>código afectado, preguntas"]
         impact --> preguntas{"¿Preguntas abiertas?"}
         preguntas -->|Sí| responder["Respondes"] --> impact
         preguntas -->|No| grande{"¿Cambio grande?"}
         grande -->|Sí| dividir["Propone dividirlo en varios cambios<br/>y sigue con el primero"] --> artefactos
-        grande -->|No| artefactos["proposal → specs → design → tasks"]
+        grande -->|No| artefactos["proposal (Alcance) → specs → design → tasks"]
     end
 
     artefactos --> revision{"Revisas y apruebas"}
@@ -93,7 +93,7 @@ Al terminar, explore sugiere `/opsx:apply`; en este flujo usa `/sdd-pair`.
 
 | Fichero | Qué aporta |
 |---|---|
-| `openspec/schemas/sdd-incremental/` | Schema OpenSpec (fork de `spec-driven`). Añade el artefacto **`impact`** antes de la propuesta, limita el tamaño de los cambios, exige specs de reglas de negocio, tareas pequeñas ligadas a escenarios y tests de regresión, y sustituye el `apply` "haz todas las tareas" por uno incremental. |
+| `openspec/schemas/sdd-incremental/` | Schema OpenSpec (fork de `spec-driven`). Añade el artefacto **`impact`** antes de la propuesta (reglas afectadas, conflictos, código afectado y preguntas), convierte la propuesta en un **Alcance** funcional breve (motivo, objetivos, no objetivos y funcionalidades, sin detalles técnicos), limita el tamaño de los cambios, exige specs de reglas de negocio, tareas pequeñas ligadas a escenarios y tests de regresión, y sustituye el `apply` "haz todas las tareas" por uno incremental. |
 | `openspec/config.example.yaml` | Artefactos en español (encabezados validados por OpenSpec en inglés) y `operations.apply.guidance` como red de seguridad si alguien usa `/opsx:apply`. |
 | `skills/sdd-pair/` | El núcleo: pair programming sobre una tarea de `tasks.md`. Propone la lista de tests, hace un ciclo TDD y para. Nunca commitea ni cambia specs para justificar el código. Sustituye a `/opsx:apply`. |
 | `scripts/install.sh`, `scripts/install.ps1` | Instalan todo en un proyecto (bash para Linux/macOS/Git Bash; PowerShell para Windows). |
@@ -153,6 +153,8 @@ En Claude Code el skill es de invocación manual (`disable-model-invocation: tru
 ## Limitación conocida
 
 La parada tras cada ciclo es una **instrucción** al agente, igual que en hola-ai: ni OpenSpec ni hola-ai la imponen técnicamente. El progreso sí es fiable, porque vive en las casillas de `tasks.md`. Si en la práctica el agente no se detiene de forma consistente, el siguiente paso es un hook de Claude Code que bloquee marcar una segunda tarea en el mismo turno.
+
+Las plantillas usan encabezados en español. `openspec validate`, `list` y `archive` funcionan con ellos, pero `openspec show <cambio>` falla con "Change must have a Why section" porque busca los encabezados en inglés de la propuesta. Ningún skill de OpenSpec usa ese comando; para ver un cambio, abre sus ficheros. En las specs, los encabezados estructurales siguen en inglés porque OpenSpec los necesita para validar y archivar.
 
 El límite de complejidad cognitiva también es una instrucción. Para que se cumpla de verdad, configúralo en el analizador del proyecto: SonarQube/SonarLint (regla de complejidad cognitiva, umbral 15), `eslint-plugin-sonarjs` (`sonarjs/cognitive-complexity: ["error", 15]`) en TypeScript/Angular, o PMD `CognitiveComplexity` en Java. `/sdd-pair` usa el analizador cuando existe y, si no, solo estima.
 

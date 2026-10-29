@@ -2,10 +2,11 @@ schema: sdd-incremental
 
 context: |
   Idioma: Español
-  Todos los artefactos (impact, proposal, specs, design, tasks) deben escribirse en español.
-  Mantén en inglés los encabezados estructurales que OpenSpec valida
-  (## Why, ## What Changes, ## Capabilities, ## Purpose, ## ADDED/MODIFIED/REMOVED/RENAMED Requirements,
-  ### Requirement:, #### Scenario:) y las palabras clave SHALL/MUST y WHEN/THEN.
+  Todos los artefactos (impact, proposal, specs, design, tasks) deben escribirse en español,
+  con los encabezados en español que marca cada plantilla.
+  Excepción: en las specs, mantén en inglés los encabezados que OpenSpec valida
+  (## Purpose, ## ADDED/MODIFIED/REMOVED/RENAMED Requirements, ### Requirement:, #### Scenario:)
+  y las palabras clave SHALL/MUST y WHEN/THEN.
 
   # Añade aquí solo restricciones que el agente no pueda deducir leyendo el código. Ejemplo:
   # Stack: Spring Boot (backend), Angular (frontend)

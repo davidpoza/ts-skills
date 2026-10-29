@@ -1,14 +1,14 @@
-# Spec Delta
+# Especificación (delta)
 
-<!-- Keep headings, SHALL/MUST and WHEN/THEN in English (OpenSpec validates them); write the prose in the project language. Business rules, not implementation. -->
+<!-- Keep ## Purpose, ## ADDED/MODIFIED/REMOVED/RENAMED Requirements, ### Requirement:, #### Scenario: and SHALL/MUST, WHEN/THEN in English: OpenSpec needs them to validate and archive. Write the rest in Spanish. Business rules, not implementation. -->
 
 ## Purpose
-<!-- New capabilities only: one or two sentences (50+ characters) on what this capability is for. Delete this section for an existing capability. -->
+<!-- New functionality only: one or two sentences (50+ characters) on what it is for. Delete this section for an existing one. -->
 
 ## ADDED Requirements
 
 ### Requirement: <!-- requirement name -->
-<!-- requirement text -->
+<!-- requirement text, with SHALL or MUST -->
 
 #### Scenario: <!-- scenario name -->
 - **WHEN** <!-- condition -->

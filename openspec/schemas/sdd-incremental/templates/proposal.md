@@ -1,36 +1,27 @@
-# Proposal
+# Alcance
 
-<!-- Keep the ## headings in English (OpenSpec parses them); write the content in the project language. -->
+<!-- Functional scope only: no variables, functions, files, endpoints or technologies. One line per bullet, no repetition across sections. -->
 
-## Why
+## Motivo
 
-<!-- Explain the motivation for this change. What problem does this solve? Why now? -->
+<!-- 1-2 sentences: the problem and why now. -->
 
-## What Changes
+## Objetivos
 
-<!-- Describe what will change. Be specific about new capabilities, modifications, or removals. -->
+- <!-- Observable behavior after the change. Mark anything that breaks current expectations with **INCOMPATIBLE**. -->
 
-## Capabilities
+## No objetivos
 
-### New Capabilities
-<!-- Capabilities being introduced. Name each capability for a cohesive system
-     behavior that can own related requirements as the system evolves. Do not name
-     implementation tasks or proposal sections. Avoid broad catch-all names. Use
-     kebab-case for path segments you introduce (e.g., user-auth or identity/user-auth)
-     that follow the project's existing spec organization. Each creates
-     specs/<capability-path>/spec.md. -->
-- `<capability-path>`: <brief description of what this capability covers>
+- <!-- Related behavior explicitly left out. Omit the section if there is nothing to exclude. -->
 
-### Modified Capabilities
-<!-- Existing capabilities whose REQUIREMENTS are changing (not just implementation).
-     Only list here if spec-level behavior changes. Each needs a delta spec file.
-     Use the exact existing path under openspec/specs/. Leave empty if no requirement
-     changes. A change with no capabilities at all (pure refactor, tooling, docs)
-     must set `skip_specs: true` in its .openspec.yaml - openspec validate rejects
-     a zero-delta change without that marker. Do not invent a requirement just to
-     satisfy validation. -->
-- `<existing-capability-path>`: <what requirement is changing>
+## Funcionalidades
 
-## Impact
+### Nuevas
 
-<!-- Affected code, APIs, dependencies, systems -->
+- `<capability-path>`: <!-- business rules it groups -->
+
+### Modificadas
+
+- `<existing-capability-path>`: <!-- which requirement changes -->
+
+<!-- Omit an empty subsection. No functionality at all (refactor, tooling, docs): set `skip_specs: true` in .openspec.yaml. -->

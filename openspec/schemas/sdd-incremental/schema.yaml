@@ -22,8 +22,8 @@ artifacts:
       - `openspec/changes/archive/` is history. Read it only to understand WHY a
         past decision was made. Never treat an archived requirement as a current
         rule: it may have been modified or removed later.
-      - Read the code only to confirm where a rule is enforced, not to infer new
-        rules.
+      - Read the code to locate what the change touches and where existing rules
+        are enforced. Never infer new rules from the code.
 
       Sections (bullets, one line each, cite the requirement as
       `<capability-path>` → "<Requirement name>"):
@@ -34,6 +34,11 @@ artifacts:
       - **Reglas que deben seguir cumpliéndose**: existing rules that must keep
         holding after the change. Each one becomes a regression test candidate
         in tasks.md.
+      - **Código / componentes / API / servicios afectados**: what the change
+        will touch, with paths or names (modules, components, endpoints,
+        services, tables, external integrations) and one line on why. This is
+        the only artifact before design.md that names code; the proposal stays
+        functional.
       - **Preguntas para decidir**: decisions that belong to the human. One
         question per bullet, each with your suggested answer.
 
@@ -42,67 +47,79 @@ artifacts:
         never an assumption.
       - Do not propose solutions, design or tasks here.
       - If there are no specs yet (new project), say so in one line and keep
-        only "Preguntas para decidir".
+        only "Código / componentes / API / servicios afectados" and
+        "Preguntas para decidir".
       - Keep it under one page. If the user has not answered the blocking
         questions, stop after writing this artifact and ask them.
     requires: []
 
   - id: proposal
     generates: proposal.md
-    description: Initial proposal document outlining the change
+    description: Functional scope of the change (title "Alcance")
     template: proposal.md
     instruction: |
-      Create the proposal document that establishes WHY this change is needed.
+      Write the functional scope of the change: what the system will and will
+      not do for its users, and why. Nothing about how it is built.
 
-      Sections:
-      - **Why**: 1-2 sentences on the problem or opportunity. What problem does this solve? Why now?
-      - **What Changes**: Bullet list of changes. Be specific about new capabilities, modifications, or removals. Mark breaking changes with **BREAKING**.
-      - **Capabilities**: Identify which specs will be created or modified:
-        - **New Capabilities**: List capabilities being introduced. Each becomes a new `specs/<capability-path>/spec.md`. Name each capability for a durable system behavior (for example, `user-auth`), not the work in this change (for example, `add-login-endpoint`). Choose a cohesive boundary that can own related requirements as the system evolves; avoid broad catch-all capabilities. Use kebab-case for path segments you introduce (e.g., `user-auth` or `identity/user-auth`) and follow the project's existing spec organization.
-        - **Modified Capabilities**: List existing capabilities whose REQUIREMENTS are changing. Only include if spec-level behavior changes (not just implementation details). Each needs a delta spec file. Use the exact existing path under `openspec/specs/`. Leave empty if no requirement changes.
-      - **Impact**: Affected code, APIs, dependencies, or systems.
+      Sections (exact Spanish headings from the template):
+      - **Motivo**: 1-2 sentences. The problem or opportunity, and why now.
+      - **Objetivos**: what the system will do after this change, one
+        observable behavior per bullet. Mark behavior that breaks existing
+        expectations with **INCOMPATIBLE**.
+      - **No objetivos**: related behavior explicitly left out, one per bullet,
+        so it does not sneak into specs or code. Omit the section if there is
+        nothing worth excluding.
+      - **Funcionalidades**: the contract with the specs phase. Each
+        funcionalidad is an OpenSpec capability (one spec folder).
+        - **Nuevas**: each becomes `specs/<capability-path>/spec.md`. Name it for
+          a durable business behavior (`gestion-reservas`), not for this work
+          (`anadir-boton-reserva`). Kebab-case; follow the project's existing
+          spec organization.
+        - **Modificadas**: existing capabilities whose REQUIREMENTS change, using
+          the exact path under `openspec/specs/`. Each needs a delta spec.
+        Omit an empty subsection.
 
-      IMPORTANT: The Capabilities section is critical. It creates the contract between
-      proposal and specs phases. Research existing specs before filling this in:
-      run `openspec list --specs` for the project's capability inventory, then
-      `openspec show "<spec-id>" --type spec --json --no-scenarios` for any that
-      look related - that returns a capability's purpose and requirement texts
-      without pulling whole spec files into context. Append `--store "<id>"` to
-      both commands only for a registered standalone store, and keep `--type
-      spec`: a change and a spec sharing a name is otherwise an ambiguous-item
-      error. `openspec list` without `--specs` lists in-flight changes, not
-      specs - it never shows what the project already covers. Reuse an existing
-      capability's exact path instead of introducing a near-duplicate name.
-      The filtered read is only an overview. Before deciding what is already
-      covered or what should change, read each relevant spec in full, including
-      scenarios, with `openspec show "<spec-id>" --type spec` (same `--store` rule).
-      Each capability listed here will need a corresponding spec file.
+      Functional only:
+      - Never mention variables, functions, classes, files, tables, endpoints,
+        libraries or frameworks. Affected code, components, APIs and services
+        belong in impact.md; technical decisions belong in design.md.
+      - Write in business terms the user would recognize.
 
-      Every change must either declare at least one capability (new or
-      modified) or explicitly opt out of specs: `openspec validate` rejects a
-      change with zero deltas unless the change's `.openspec.yaml` sets
-      `skip_specs: true`. Use `skip_specs: true` only when no spec-level
-      behavior changes (pure refactor, tooling, docs) - specs describe
-      behavior, so if behavior does not change, no spec should change either.
-      Do not invent a requirement just to satisfy validation.
+      Concise and unambiguous - it must read in under a minute:
+      - One line per bullet. No introductions, no summaries, no filler.
+      - Never repeat between sections, and never restate impact.md: if a point
+        is already in Motivo, it does not reappear in Objetivos.
+      - Use concrete, verifiable words ("una operación cancelada libera sus
+        recursos"), not vague ones ("mejorar la gestión de recursos").
+      - If a bullet cannot be made unambiguous without a decision from the user,
+        ask instead of writing it.
 
-      Keep it concise (1-2 pages). Focus on the "why" not the "how" -
-      implementation details belong in design.md.
+      Before filling in Funcionalidades, research existing specs: run
+      `openspec list --specs` for the capability inventory, then
+      `openspec show "<spec-id>" --type spec --json --no-scenarios` for related
+      ones, and read each relevant spec in full with
+      `openspec show "<spec-id>" --type spec`. Append `--store "<id>"` only for
+      a registered standalone store, and keep `--type spec` (a change and a
+      spec sharing a name is otherwise ambiguous). Reuse an existing
+      capability's exact path instead of a near-duplicate name.
+
+      Every change must declare at least one capability, or set
+      `skip_specs: true` in the change's `.openspec.yaml` when no spec-level
+      behavior changes (pure refactor, tooling, docs) - `openspec validate`
+      rejects a zero-delta change otherwise. Do not invent a requirement just
+      to satisfy validation.
 
       Build on impact.md: respect the answers the user gave to its questions and
       do not resolve its conflicts on your own. If a blocking question is still
       unanswered, ask before writing the proposal.
 
       Keep the change small and vertical. If it needs more than ~3 new
-      requirements, or touches several unrelated capabilities, do not bloat it:
-      propose splitting it into several changes (one line each, kebab-case
-      name + what it delivers) and continue with the first one only after the
-      user agrees.
+      requirements, or touches several unrelated capabilities, propose
+      splitting it into several changes (one line each: kebab-case name + what
+      it delivers) and continue with the first one only after the user agrees.
 
       Do not invent requirements. Only include what the user asked for; list
       gaps as questions.
-
-      This is the foundation - specs, design, and tasks all build on this.
     requires:
       - impact
 
@@ -130,7 +147,7 @@ artifacts:
       Quick test: if the implementation can change without changing externally
       visible behavior, it likely does not belong in the spec.
 
-      Create one spec file per capability listed in the proposal's Capabilities section.
+      Create one spec file per capability listed in the proposal's "Funcionalidades" section.
       `<capability-path>` is the spec directory relative to `specs/` (for example,
       `user-auth` or `identity/user-auth`). Preserve the full path:
       - New capabilities: use the exact path from the proposal at `specs/<capability-path>/spec.md`. Any path segment newly introduced in the proposal must be kebab-case. Follow the project's existing organization; do not add a new domain level when the project uses a flat layout.
@@ -155,7 +172,7 @@ artifacts:
       Delta operations (use ## headers):
       - **ADDED Requirements**: New capabilities
       - **MODIFIED Requirements**: Changed behavior - MUST include full updated content
-      - **REMOVED Requirements**: Deprecated features - MUST include **Reason** and **Migration**
+      - **REMOVED Requirements**: Deprecated features - MUST include **Motivo** and **Migración** (Spanish labels)
       - **RENAMED Requirements**: Name changes only - use FROM:/TO: format
 
       Format requirements:
@@ -191,28 +208,35 @@ artifacts:
       Common pitfall: Using MODIFIED with partial content loses detail at archive time.
       If adding new concerns without changing existing behavior, use ADDED instead.
 
+      Language: the structural headings `## Purpose`, `## ADDED/MODIFIED/
+      REMOVED/RENAMED Requirements`, `### Requirement:` and `#### Scenario:`,
+      and the keywords SHALL/MUST and WHEN/THEN, MUST stay in English:
+      OpenSpec finds requirements only through them, and a change with
+      translated headings fails validation and cannot be archived. Everything
+      else (title, requirement and scenario names, prose, labels) is Spanish.
+
       Example (a new capability, so its first section is `## Purpose`):
       ```
-      # Spec Delta
+      # Especificación (delta)
 
       ## Purpose
 
-      Lets users take their data out of the product in a portable format.
+      Permite a los usuarios llevarse sus datos en un formato portable.
 
       ## ADDED Requirements
 
-      ### Requirement: User can export data
-      The system SHALL allow users to export their data in CSV format.
+      ### Requirement: El usuario puede exportar sus datos
+      El sistema SHALL permitir a los usuarios exportar sus datos en CSV.
 
-      #### Scenario: Successful export
-      - **WHEN** user clicks "Export" button
-      - **THEN** system downloads a CSV file with all user data
+      #### Scenario: Exportación correcta
+      - **WHEN** el usuario pulsa "Exportar"
+      - **THEN** el sistema descarga un CSV con todos sus datos
 
       ## REMOVED Requirements
 
-      ### Requirement: Legacy export
-      **Reason**: Replaced by new export system
-      **Migration**: Use new export endpoint at /api/v2/export
+      ### Requirement: Exportación antigua
+      **Motivo**: sustituida por la nueva exportación
+      **Migración**: usar la nueva exportación desde el perfil del usuario
       ```
 
       Specs should be testable - each scenario is a potential test case.
@@ -244,13 +268,12 @@ artifacts:
       - Security, performance, or migration complexity
       - Ambiguity that benefits from technical decisions before coding
 
-      Sections:
-      - **Context**: Only the current state and constraints needed to explain the approach. Reference the proposal for motivation instead of restating it (e.g., "See proposal.md - Why").
-      - **Goals / Non-Goals**: What this design achieves and explicitly excludes. Don't restate the proposal's scope - add only design-level boundaries.
-      - **Decisions**: Key technical choices with rationale (why X over Y?). Include alternatives considered for each decision.
-      - **Risks / Trade-offs**: Known limitations, things that could go wrong. Format: [Risk] → Mitigation
-      - **Migration Plan**: Steps to deploy, rollback strategy (if applicable)
-      - **Open Questions**: Unknowns that can safely be answered later without
+      Sections (exact Spanish headings from the template):
+      - **Contexto**: Only the current state and constraints needed to explain the approach. Reference the proposal for motivation and scope instead of restating them (e.g., "Ver proposal.md - Objetivos"). Objectives and non-objectives live in the proposal; do not add a goals section here.
+      - **Decisiones**: Key technical choices with rationale (why X over Y?). Include alternatives considered for each decision.
+      - **Riesgos / Compromisos**: Known limitations, things that could go wrong. Format: [Riesgo] → Mitigación
+      - **Plan de migración**: Steps to deploy, rollback strategy (only if applicable).
+      - **Preguntas abiertas**: Unknowns that can safely be answered later without
         changing the specs, the approach, or the task breakdown. Omit if none.
 
       Open questions are for genuinely deferrable unknowns, not decisions you
@@ -266,7 +289,7 @@ artifacts:
 
       The simplest thing that meets the specs. No abstractions, layers,
       configuration or patterns "for the future". If a pattern could help,
-      mention it under Decisions as a suggestion with its concrete signal in the
+      mention it under Decisiones as a suggestion with its concrete signal in the
       current code (for example, something that already repeats); the user
       decides. Keep it short: every decision listed here is one the
       implementation is allowed to take without asking again, and any decision
@@ -281,7 +304,7 @@ artifacts:
     instruction: |
       Create the task list that breaks down the implementation work.
 
-      Before writing tasks, check design.md for Open Questions. If any of them
+      Before writing tasks, check design.md for "Preguntas abiertas". If any of them
       would change what gets built, resolve them with the user first - do not
       bake an unstated assumption into the task list.
 
@@ -299,7 +322,7 @@ artifacts:
       - Track implementation and verification work that can be completed before
         archive. If the requested workflow includes archive or work that requires
         this change to be archived, preserve those steps as plain bullets in an
-        optional `## Workflow follow-up` section at the end of tasks.md. These
+        optional `## Seguimiento del flujo` section at the end of tasks.md. These
         bullets are reference information outside tracked task progress.
       - Each task MUST state how to verify completion (a test, command,
         observable behavior, or delivered artifact). Put the verification in
@@ -348,12 +371,12 @@ artifacts:
       - [ ] 2.1 El panel muestra el aviso de cancelación (verificación manual)
       ```
 
-      When applicable, append workflow follow-up as plain bullets, for example:
+      When applicable, append the workflow follow-up as plain bullets, for example:
       ```
-      ## Workflow follow-up
+      ## Seguimiento del flujo
 
-      - Archive the change after the project's review requirements are satisfied.
-      - Verify the archived result.
+      - Archivar el cambio cuando se cumplan los requisitos de revisión del proyecto.
+      - Verificar el resultado archivado.
       ```
 
       Reference specs for what needs to be built, design for how to build it.

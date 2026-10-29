@@ -1,10 +1,10 @@
 # Tareas
 
-## 1. <!-- Comportamiento (no capa técnica) -->
+## 1. <!-- Behavior (not a technical layer) -->
 
-- [ ] 1.1 <!-- Incremento pequeño — escenario "<nombre>"; test `<nombre>` (<dónde se prueba>) -->
-- [ ] 1.2 <!-- Regresión: <regla de impact.md> — test `<nombre>` (<dónde>) -->
+- [ ] 1.1 <!-- Small increment — scenario "<name>"; test `<name>` (<where it runs>) -->
+- [ ] 1.2 <!-- Regression: <rule from impact.md> — test `<name>` (<where>) -->
 
-## 2. <!-- Comportamiento -->
+## 2. <!-- Behavior -->
 
-- [ ] 2.1 <!-- Incremento pequeño — escenario "<nombre>"; test `<nombre>` (<dónde>) -->
+- [ ] 2.1 <!-- Small increment — scenario "<name>"; test `<name>` (<where>) -->
