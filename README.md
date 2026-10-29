@@ -16,12 +16,76 @@ Dos garantías complementarias:
 
 ## Flujo
 
+```mermaid
+flowchart TD
+    idea["Idea o funcionalidad"] --> grande{"¿Es grande?"}
+    grande -->|Sí| backlog["/sdd-backlog<br/>idea → historias de una línea"]
+    grande -->|No| propose
+    backlog --> historia["Elegir UNA historia"]
+    historia --> propose["/opsx:propose &lt;historia + detalles&gt;"]
+
+    subgraph plan ["Planificación (OpenSpec)"]
+        propose --> impact["impact.md<br/>reglas afectadas, conflictos, preguntas"]
+        impact --> preguntas{"¿Preguntas abiertas?"}
+        preguntas -->|Sí| responder["Respondes"] --> impact
+        preguntas -->|No| artefactos["proposal → specs → design → tasks"]
+    end
+
+    artefactos --> revision{"Revisas y apruebas"}
+    revision -->|Cambios| artefactos
+
+    subgraph impl ["Implementación (/sdd-pair)"]
+        tarea["Primera tarea pendiente"] --> tests["Propone lista de tests"] --> aprueba{"¿Apruebas?"}
+        aprueba -->|No| tests
+        aprueba -->|Sí| ciclo["1 ciclo TDD<br/>rojo → mínimo → verde<br/>complejidad ≤ 15"]
+        ciclo --> para["Se detiene: revisas"]
+        para -->|Más tests| ciclo
+        para -->|Tarea completa| marca["Marca [x] y sugiere commit<br/>(el commit lo haces tú)"]
+        marca --> quedan{"¿Quedan tareas?"}
+        quedan -->|Sí| tarea
+    end
+
+    revision -->|OK| tarea
+
+    quedan -->|No| verify["/opsx:verify"] --> archive["/opsx:archive<br/>specs del cambio → openspec/specs/"]
+    archive --> mas{"¿Más historias?"}
+    mas -->|Sí| historia
 ```
-/sdd-backlog (opcional)          idea → historias verticales = futuros changes
-/opsx:propose <change>           impact → proposal → specs → design → tasks   ← revisas y apruebas
-/sdd-pair                        1 tarea, 1 ciclo TDD, se detiene              ← revisas
-/sdd-pair …                      repetir hasta completar tasks.md
-/opsx:verify  →  /opsx:archive   las delta specs pasan a openspec/specs/
+
+| Paso | Comando | Qué haces tú |
+|---|---|---|
+| 0. Trocear (opcional) | `/sdd-backlog` | Cuentas la idea entera y ajustas la lista de historias |
+| 1. Proponer | `/opsx:propose <historia>` | Respondes las preguntas de `impact.md` y revisas specs y tareas |
+| 2. Implementar | `/sdd-pair` (una vez por tarea) | Apruebas la lista de tests y revisas cada ciclo |
+| 3. Cerrar | `/opsx:verify` → `/opsx:archive` | Confirmas que el código cumple las specs |
+
+### Qué descripción recibe cada comando
+
+La descripción se da **dos veces y a dos niveles**:
+
+- **`/sdd-backlog`** recibe la **idea entera** y la trocea en historias de **una línea**, sin detalle a propósito.
+- **`/opsx:propose`** recibe **una historia** y la desarrolla: análisis de impacto, propuesta, specs con escenarios (los criterios de aceptación), diseño y tareas.
+
+Una línea del backlog no basta para escribir specs. El detalle se completa en el propose: OpenSpec pregunta lo que afecte al alcance o a los criterios de aceptación, y `impact.md` añade las preguntas que te toca decidir.
+
+En la **misma conversación** que el backlog, basta con el nombre:
+
+```
+/opsx:propose reasignar-recurso-manual
+```
+
+En una **sesión nueva** (por ejemplo, desde Jira), pega la historia y lo que sepas:
+
+```
+/opsx:propose reasignar-recurso-manual: Como operador, quiero reasignar un recurso a otra
+operación, para cubrir un cambio de última hora. Solo recursos libres en ese horario;
+el supervisor no tiene que aprobarlo.
+```
+
+**Sin backlog**, cuando el cambio ya es pequeño, describe directamente lo que quieres:
+
+```
+/opsx:propose "permitir cancelar una operación pendiente y liberar sus recursos"
 ```
 
 ## Qué contiene
