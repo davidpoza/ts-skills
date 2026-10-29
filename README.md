@@ -18,17 +18,18 @@ Dos garantías complementarias:
 
 ```mermaid
 flowchart TD
-    idea["Idea o funcionalidad"] --> grande{"¿Es grande?"}
-    grande -->|Sí| backlog["/sdd-backlog<br/>idea → historias de una línea"]
-    grande -->|No| propose
-    backlog --> historia["Elegir UNA historia"]
-    historia --> propose["/opsx:propose &lt;historia + detalles&gt;"]
+    idea["Necesidad o funcionalidad"] --> clara{"¿Está clara?"}
+    clara -->|No| explore["/opsx:explore<br/>pensar, investigar, comparar opciones<br/>(no escribe código)"]
+    explore --> propose
+    clara -->|Sí| propose["/opsx:propose &lt;descripción&gt;"]
 
     subgraph plan ["Planificación (OpenSpec)"]
         propose --> impact["impact.md<br/>reglas afectadas, conflictos, preguntas"]
         impact --> preguntas{"¿Preguntas abiertas?"}
         preguntas -->|Sí| responder["Respondes"] --> impact
-        preguntas -->|No| artefactos["proposal → specs → design → tasks"]
+        preguntas -->|No| grande{"¿Cambio grande?"}
+        grande -->|Sí| dividir["Propone dividirlo en varios cambios<br/>y sigue con el primero"] --> artefactos
+        grande -->|No| artefactos["proposal → specs → design → tasks"]
     end
 
     artefactos --> revision{"Revisas y apruebas"}
@@ -46,35 +47,24 @@ flowchart TD
     end
 
     revision -->|OK| tarea
+    para -->|Decisión no prevista<br/>o spec dudosa| atasco["/opsx:explore → /opsx:update<br/>actualiza design o specs"]
+    atasco --> ciclo
 
     quedan -->|No| verify["/opsx:verify"] --> archive["/opsx:archive<br/>specs del cambio → openspec/specs/"]
-    archive --> mas{"¿Más historias?"}
-    mas -->|Sí| historia
+    archive --> siguiente{"¿Más cambios pendientes?"}
+    siguiente -->|Sí| propose
 ```
 
 | Paso | Comando | Qué haces tú |
 |---|---|---|
-| 0. Trocear (opcional) | `/sdd-backlog` | Cuentas la idea entera y ajustas la lista de historias |
-| 1. Proponer | `/opsx:propose <historia>` | Respondes las preguntas de `impact.md` y revisas specs y tareas |
+| 0. Pensar (opcional) | `/opsx:explore` | Aclaras qué quieres, comparas opciones y ves qué reglas afecta |
+| 1. Proponer | `/opsx:propose <descripción>` | Respondes las preguntas de `impact.md` y revisas specs y tareas |
 | 2. Implementar | `/sdd-pair` (una vez por tarea) | Apruebas la lista de tests y revisas cada ciclo |
 | 3. Cerrar | `/opsx:verify` → `/opsx:archive` | Confirmas que el código cumple las specs |
 
-### Qué descripción recibe cada comando
+### Qué descripción recibe `/opsx:propose`
 
-La descripción se da **dos veces y a dos niveles**:
-
-- **`/sdd-backlog`** recibe la **idea entera** y la trocea en historias de **una línea**, sin detalle a propósito.
-- **`/opsx:propose`** recibe **una historia** y la desarrolla: análisis de impacto, propuesta, specs con escenarios (los criterios de aceptación), diseño y tareas.
-
-Una línea del backlog no basta para escribir specs. El detalle se completa en el propose: OpenSpec pregunta lo que afecte al alcance o a los criterios de aceptación, y `impact.md` añade las preguntas que te toca decidir.
-
-En la **misma conversación** que el backlog, basta con el nombre:
-
-```
-/opsx:propose reasignar-recurso-manual
-```
-
-En una **sesión nueva** (por ejemplo, desde Jira), pega la historia y lo que sepas:
+Un cambio pequeño, descrito con lo que sepas. Si viene de una historia de Jira, pégala con sus detalles:
 
 ```
 /opsx:propose reasignar-recurso-manual: Como operador, quiero reasignar un recurso a otra
@@ -82,11 +72,22 @@ operación, para cubrir un cambio de última hora. Solo recursos libres en ese h
 el supervisor no tiene que aprobarlo.
 ```
 
-**Sin backlog**, cuando el cambio ya es pequeño, describe directamente lo que quieres:
+O directamente:
 
 ```
 /opsx:propose "permitir cancelar una operación pendiente y liberar sus recursos"
 ```
+
+No hace falta que la descripción sea completa. El detalle se completa al proponer: OpenSpec pregunta lo que afecte al alcance o a los criterios de aceptación, y `impact.md` añade las preguntas que te toca decidir. Si la petición es demasiado grande, la propuesta te ofrecerá dividirla en varios cambios; los demás quedan como siguientes `/opsx:propose`.
+
+### `/opsx:explore`
+
+Modo "pensar antes de construir" de OpenSpec: investiga el código y las specs vigentes, plantea preguntas y recomienda opciones, pero **nunca escribe código**. Úsalo en dos momentos:
+
+- **Antes de proponer**, cuando la necesidad no está clara.
+- **Cuando `/sdd-pair` se detiene** por una decisión de diseño que no está en `design.md` o una spec que parece incorrecta. Lo piensas en explore, actualizas el cambio con `/opsx:update` y vuelves a `/sdd-pair`.
+
+Al terminar, explore sugiere `/opsx:apply`; en este flujo usa `/sdd-pair`.
 
 ## Qué contiene
 
@@ -95,7 +96,6 @@ el supervisor no tiene que aprobarlo.
 | `openspec/schemas/sdd-incremental/` | Schema OpenSpec (fork de `spec-driven`). Añade el artefacto **`impact`** antes de la propuesta, limita el tamaño de los cambios, exige specs de reglas de negocio, tareas pequeñas ligadas a escenarios y tests de regresión, y sustituye el `apply` "haz todas las tareas" por uno incremental. |
 | `openspec/config.example.yaml` | Artefactos en español (encabezados validados por OpenSpec en inglés) y `operations.apply.guidance` como red de seguridad si alguien usa `/opsx:apply`. |
 | `skills/sdd-pair/` | El núcleo: pair programming sobre una tarea de `tasks.md`. Propone la lista de tests, hace un ciclo TDD y para. Nunca commitea ni cambia specs para justificar el código. Sustituye a `/opsx:apply`. |
-| `skills/sdd-backlog/` | Trocea una idea en 10–15 historias verticales, cada una un change pequeño. Consulta antes las specs vigentes. |
 | `scripts/install.sh`, `scripts/install.ps1` | Instalan todo en un proyecto (bash para Linux/macOS/Git Bash; PowerShell para Windows). |
 
 No se modifica OpenSpec: se usa su CLI oficial y sus puntos de extensión documentados (schemas propios, `config.yaml`). Los skills `openspec-*` siguen siendo de OpenSpec y `openspec update` los regenera sin tocar los `sdd-*`.
@@ -133,12 +133,12 @@ Después, añade el stack y las restricciones del proyecto en `openspec/config.y
 
 | Agente | Dónde se instalan | Cómo se invocan |
 |---|---|---|
-| Claude Code | `.claude/skills/` | `/sdd-pair`, `/sdd-backlog` |
-| Codex | `.agents/skills/` | `$sdd-pair`, `$sdd-backlog` |
-| GitHub Copilot | `.github/skills/` | skill `sdd-pair`, `sdd-backlog` |
-| OpenCode | `.opencode/skills/` | pide al agente que use el skill `sdd-pair` / `sdd-backlog`; los comandos de OpenSpec son `/opsx-propose`, `/opsx-explore`… |
+| Claude Code | `.claude/skills/` | `/sdd-pair` |
+| Codex | `.agents/skills/` | `$sdd-pair` |
+| GitHub Copilot | `.github/skills/` | skill `sdd-pair` |
+| OpenCode | `.opencode/skills/` | pide al agente que use el skill `sdd-pair`; los comandos de OpenSpec son `/opsx-propose`, `/opsx-explore`… |
 
-En Claude Code los skills son de invocación manual (`disable-model-invocation: true`) y nunca se activan solos. Los demás agentes ignoran ese campo y pueden cargarlos por su cuenta si el contexto encaja; invócalos explícitamente.
+En Claude Code el skill es de invocación manual (`disable-model-invocation: true`) y nunca se activa solo. Los demás agentes ignoran ese campo y pueden cargarlo por su cuenta si el contexto encaja; invócalo explícitamente.
 
 ## Principios
 
@@ -159,4 +159,4 @@ El límite de complejidad cognitiva también es una instrucción. Para que se cu
 ## Créditos
 
 - Schema derivado de `spec-driven` de [OpenSpec](https://github.com/Fission-AI/openspec) (MIT, © OpenSpec Contributors).
-- Skills adaptados de [hola-ai](https://github.com/nschurmann/hola-ai) (MIT, © Nicolas Schurmann).
+- `sdd-pair` adaptado del skill `pair` de [hola-ai](https://github.com/nschurmann/hola-ai) (MIT, © Nicolas Schurmann).
