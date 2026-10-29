@@ -1,0 +1,7 @@
+flowchart LR
+    P["Cambio propuesto<br/>changes/"] -->|"tú apruebas y se archiva"| A["Reglas aprobadas<br/>openspec/specs/"]
+    C["Código"] -->|"se verifica contra"| A
+    C -.-x|"NUNCA las cambia"| A
+    classDef rule fill:#e3f4e8,stroke:#27ae60,color:#222
+    class A rule
+    linkStyle 2 stroke:#c0392b,color:#c0392b

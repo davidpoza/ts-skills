@@ -1,0 +1,7 @@
+flowchart LR
+    C["Ciclo TDD"] --> Q["¿Necesita una decisión no prevista?<br/>¿Añadir algo no pedido?<br/>¿Tocar un test para que pase?<br/>¿Más de 50 líneas o 3 ficheros?<br/>¿Complejidad cognitiva > 15?<br/>¿Contradice una spec?"]
+    Q -->|"alguna sí"| S(["PARA y te pregunta"])
+    Q -->|"ninguna"| OK(["Verde: PARA y te<br/>enseña el resultado"])
+    classDef human fill:#fff4d6,stroke:#e67e22,color:#222
+    classDef q fill:#eef3f9,stroke:#1f3a5f,color:#222,text-align:left
+    class S,OK human

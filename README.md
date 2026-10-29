@@ -3,7 +3,7 @@
 Desarrollo guiado por especificaciones (SDD) que combina:
 
 - **[OpenSpec](https://github.com/Fission-AI/openspec) como memoria funcional**: reglas de negocio vigentes, historial de cambios y análisis de impacto antes de tocar nada.
-- **[hola-ai](https://github.com/nschurmann/hola-ai) como disciplina de implementación**: un test → rojo → código mínimo → verde → **parar y revisar**.
+- **TDD incremental como disciplina de implementación**: un test → rojo → código mínimo → verde → **parar y revisar**.
 
 > Generar código es barato; comprenderlo, validarlo y mantenerlo sigue siendo caro. Detenerse a menudo cuesta menos que comprender de golpe miles de líneas generadas por una IA.
 
@@ -87,7 +87,7 @@ Modo "pensar antes de construir" de OpenSpec: investiga el código y las specs v
 - **Antes de proponer**, cuando la necesidad no está clara.
 - **Cuando `/sdd-pair` se detiene** por una decisión de diseño que no está en `design.md` o una spec que parece incorrecta. Lo piensas en explore, actualizas el cambio con `/opsx:update` y vuelves a `/sdd-pair`.
 
-Al terminar, explore sugiere `/opsx:apply`; en este flujo usa `/sdd-pair`.
+Los skills de OpenSpec (propose, explore, update) tienen escrito "run `/opsx:apply`" como siguiente paso. El schema y el `context` del config les piden sugerir `/sdd-pair` en su lugar, pero es una instrucción: si alguno sigue diciendo `/opsx:apply`, usa `/sdd-pair`.
 
 ## Qué contiene
 
@@ -152,7 +152,7 @@ En Claude Code el skill es de invocación manual (`disable-model-invocation: tru
 
 ## Limitación conocida
 
-La parada tras cada ciclo es una **instrucción** al agente, igual que en hola-ai: ni OpenSpec ni hola-ai la imponen técnicamente. El progreso sí es fiable, porque vive en las casillas de `tasks.md`. Si en la práctica el agente no se detiene de forma consistente, el siguiente paso es un hook de Claude Code que bloquee marcar una segunda tarea en el mismo turno.
+La parada tras cada ciclo es una **instrucción** al agente, no un bloqueo técnico: OpenSpec no la impone. El progreso sí es fiable, porque vive en las casillas de `tasks.md`. Si en la práctica el agente no se detiene de forma consistente, el siguiente paso es un hook de Claude Code que bloquee marcar una segunda tarea en el mismo turno.
 
 Las plantillas usan encabezados en español. `openspec validate`, `list` y `archive` funcionan con ellos, pero `openspec show <cambio>` falla con "Change must have a Why section" porque busca los encabezados en inglés de la propuesta. Ningún skill de OpenSpec usa ese comando; para ver un cambio, abre sus ficheros. En las specs, los encabezados estructurales siguen en inglés porque OpenSpec los necesita para validar y archivar.
 

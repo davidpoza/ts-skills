@@ -1,0 +1,11 @@
+flowchart LR
+    A["Propuesta"] --> B["Specs"] --> C["Diseño"] --> D["Tareas"]
+    D --> R(["Revisión<br/>humana"])
+    R --> E["apply:<br/>implementa TODAS<br/>las tareas"]
+    E --> F["Archivar:<br/>specs vigentes"]
+    classDef good fill:#e3f4e8,stroke:#27ae60,color:#222
+    classDef bad fill:#fde2e1,stroke:#c0392b,color:#222
+    classDef human fill:#fff4d6,stroke:#e67e22,color:#222
+    class A,B,C,D,F good
+    class E bad
+    class R human

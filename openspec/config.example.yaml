@@ -8,6 +8,10 @@ context: |
   (## Purpose, ## ADDED/MODIFIED/REMOVED/RENAMED Requirements, ### Requirement:, #### Scenario:)
   y las palabras clave SHALL/MUST y WHEN/THEN.
 
+  Implementación: este proyecto implementa siempre con el skill sdd-pair (/sdd-pair en Claude Code,
+  $sdd-pair en Codex), nunca con /opsx:apply. Cuando un flujo indique el siguiente paso para
+  implementar, nombra /sdd-pair en lugar de /opsx:apply.
+
   # Añade aquí solo restricciones que el agente no pueda deducir leyendo el código. Ejemplo:
   # Stack: Spring Boot (backend), Angular (frontend)
   # Tests: JUnit 5 + Spring Boot Test; Jasmine/Karma en el frontend

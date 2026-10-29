@@ -1,0 +1,12 @@
+flowchart LR
+    A["1 test"] --> B["Rojo:<br/>falla"]
+    B --> C["Código<br/>mínimo"]
+    C --> D["Verde:<br/>pasa"]
+    D --> E(["PARA:<br/>tú revisas"])
+    E -->|"sigue"| A
+    classDef red fill:#fde2e1,stroke:#c0392b,color:#222
+    classDef green fill:#e3f4e8,stroke:#27ae60,color:#222
+    classDef human fill:#fff4d6,stroke:#e67e22,color:#222
+    class B red
+    class D green
+    class E human

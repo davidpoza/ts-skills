@@ -1,0 +1,8 @@
+flowchart LR
+    A["Idea"] --> B["Prompt"]
+    B --> C["La IA genera<br/>3.000 líneas"]
+    C --> D(["¿Parece que funciona?"])
+    D -->|No| B
+    D -->|Sí| E["Revisión al final:<br/>horas reconstruyendo<br/>qué decidió la IA"]
+    classDef bad fill:#fde2e1,stroke:#c0392b,color:#222
+    class C,E bad

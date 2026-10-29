@@ -1,0 +1,12 @@
+flowchart LR
+    O["OpenSpec<br/>impacto · alcance<br/>specs · tareas"] -->|"tú apruebas"| L["Lista<br/>de tests"]
+    L --> C["1 ciclo TDD"] --> R(["Tú revisas"])
+    R -->|"siguiente"| C
+    R -->|"hecho"| V["Verificar<br/>y archivar"]
+    V -.->|"memoria para el próximo cambio"| O
+    classDef que fill:#e8f0fb,stroke:#1f3a5f,color:#222
+    classDef como fill:#fff4d6,stroke:#e67e22,color:#222
+    classDef fin fill:#e3f4e8,stroke:#27ae60,color:#222
+    class O que
+    class L,C,R como
+    class V fin

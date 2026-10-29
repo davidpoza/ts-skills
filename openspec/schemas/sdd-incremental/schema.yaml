@@ -2,7 +2,7 @@ name: sdd-incremental
 version: 1
 description: >-
   Spec-driven workflow with impact analysis and supervised incremental TDD
-  (OpenSpec + hola-ai) - impact → proposal → specs → design → tasks → one
+  (OpenSpec + incremental TDD) - impact → proposal → specs → design → tasks → one
   reviewed TDD cycle at a time
 artifacts:
   - id: impact
@@ -380,6 +380,12 @@ artifacts:
       ```
 
       Reference specs for what needs to be built, design for how to build it.
+
+      Next step: this project implements with the `sdd-pair` skill, never with
+      the apply workflow. When the planning artifacts are ready and you tell
+      the user how to continue, name `/sdd-pair` (`$sdd-pair` in Codex; the
+      `sdd-pair` skill in other agents) instead of `/opsx:apply`, `/opsx-apply`
+      or `openspec-apply-change`.
     requires:
       - specs
       - design
