@@ -33,4 +33,5 @@ operations:
       - Stop before any design decision not covered by design.md or any behavior not in the specs
       - Never change, skip or delete a test to make it pass; never edit specs to match the code
       - Keep the cognitive complexity of every function written or touched at 15 or less whenever possible; if it ends up above 15, report it and propose a refactor before continuing
+      - "IMPERATIVE in Angular projects whose package.json declares test:server and karma:run: start `npm run test:server` once in the background and keep it running; run only the needed tests with `npm run karma:run -- \"<test description>\"` and read the result from that command's output; never use ng test or npm test"
       - Never commit; suggest the commit message instead

@@ -60,6 +60,18 @@ Change anything or continue with "<next test>"?
 - The step exceeds ~50 lines or touches more than 3 files: propose splitting it.
 - The code you're asked to write contradicts an approved spec, or an approved spec looks wrong.
 
+### Running tests
+
+Use the project's own test commands. Before the first test run of the session, read `package.json`.
+
+**Angular projects (IMPERATIVE).** If the project is Angular (`angular.json` exists or `@angular/core` is a dependency) **and** `package.json` declares both the `test:server` and `karma:run` scripts, you MUST run tests this way and no other (never `ng test`, `npm test` or a direct Karma call):
+
+1. **Start the test server once** with `npm run test:server` as a background / long-running process, so it keeps running for the whole session. Don't wait for it to exit, never stop it, and don't start a second one if it's already running. Wait until it reports it is ready before the first run. If it crashes, restart it the same way.
+2. **Run only the tests you need, by description:** `npm run karma:run -- "<description>"`, where `<description>` is the `describe`/`it` text of the test(s), e.g. `npm run karma:run -- "libera recursos al cancelar"`. To run several related tests, pass the description of their enclosing `describe`.
+3. **Read the result from the `karma:run` output** (passed/failed tests and errors), not from the server's output. Red and green are both shown with this command.
+
+If either script is missing, use the project's usual test command instead.
+
 ### Test rules
 
 - The expected value comes from the spec scenario, **never computed with the same logic as the code**.

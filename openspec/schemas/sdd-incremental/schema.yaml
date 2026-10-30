@@ -416,4 +416,11 @@ apply:
       Measure it with the project's analyzer when configured. If it ends up
       above 15, report it and propose a refactor (tests green, separate
       step); it stays above 15 only with the user's explicit approval.
+    - Angular projects (IMPERATIVE): if the project is Angular and
+      package.json declares both `test:server` and `karma:run`, start
+      `npm run test:server` once in the background and keep it running for
+      the whole session (never stop it, never start a second one), then run
+      only the needed tests by description with
+      `npm run karma:run -- "<describe/it description>"` and read the result
+      from that command's output. Never use `ng test` or `npm test` there.
     - Never edit specs to match the code. Never commit.
