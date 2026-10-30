@@ -418,8 +418,16 @@ apply:
       step); it stays above 15 only with the user's explicit approval.
     - Angular projects (IMPERATIVE): if the project is Angular and
       package.json declares both `test:server` and `karma:run`, start
-      `npm run test:server` once in the background and keep it running for
-      the whole session (never stop it, never start a second one), then run
+      `npm run test:server` once as a background process and keep it running
+      for the whole session. It never returns: never run it in the
+      foreground or wait for it to finish. Start it early and keep working;
+      check its log only right before the first karma:run, with short waits
+      (~10 s, never long sleeps), until the initial full run finished
+      ("Executed N of N" / "TOTAL:"). Never stop it or start a second one. In PowerShell,
+      start it detached with
+      `Start-Process -FilePath cmd.exe -ArgumentList "/c","npm run test:server > .test-server.log 2>&1" -WindowStyle Hidden`
+      (not Start-Job) and call `npm.cmd` instead of `npm` so the `--`
+      reaches karma:run. Then run
       only the needed tests by description with
       `npm run karma:run -- "<describe/it description>"` and read the result
       from that command's output. Never use `ng test` or `npm test` there.

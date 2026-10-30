@@ -17,6 +17,7 @@ Generating code is cheap; understanding it is not. Stopping often is the point, 
    - `state: "blocked"`: show the message and stop. If `missingArtifacts` is non-empty, suggest `/opsx:propose` or `/opsx:continue` to finish planning.
    - `state: "all_done"`: say so and go to **6. Close the change**.
 3. Read every file listed in `contextFiles` (impact, proposal, specs, design, tasks). Treat `context` as project facts and `operationGuidance` as advice; neither overrides this skill.
+4. If the project uses a long-running test server (see **Running tests**), start it now, in the background, and carry on: it warms up while you prepare the task and the test list.
 
 ## 2. Pick ONE task
 
@@ -66,9 +67,48 @@ Use the project's own test commands. Before the first test run of the session, r
 
 **Angular projects (IMPERATIVE).** If the project is Angular (`angular.json` exists or `@angular/core` is a dependency) **and** `package.json` declares both the `test:server` and `karma:run` scripts, you MUST run tests this way and no other (never `ng test`, `npm test` or a direct Karma call):
 
-1. **Start the test server once** with `npm run test:server` as a background / long-running process, so it keeps running for the whole session. Don't wait for it to exit, never stop it, and don't start a second one if it's already running. Wait until it reports it is ready before the first run. If it crashes, restart it the same way.
-2. **Run only the tests you need, by description:** `npm run karma:run -- "<description>"`, where `<description>` is the `describe`/`it` text of the test(s), e.g. `npm run karma:run -- "libera recursos al cancelar"`. To run several related tests, pass the description of their enclosing `describe`.
+1. **Start the test server once, in the background, and leave it running for the whole session.** `npm run test:server` never returns: running it in the foreground, or waiting for it to finish, blocks the session. **Never wait for its return.**
+   - **Start it early** (when you load the change) and keep working: read the artifacts, propose the test list, wait for my approval. Don't sit idle while it builds.
+   - **Check readiness only right before the first `karma:run`.** On start-up `ng test` builds the bundles and then runs the whole suite once; it is ready when the log shows that first run finished (a line like `Executed N of N` or `TOTAL:`). Compile errors in the log mean it is not ready: report them.
+   - If it isn't ready yet, poll the log with short waits (about 10 s each), never long sleeps. If it still isn't ready after about 5 minutes, stop and tell me what the log shows.
+   - The results of that initial full-suite run are not the result of your test: only `karma:run` output counts.
+2. **Run only the tests you need, by description**, where `<description>` is the `describe`/`it` text of the test(s). To run several related tests, pass the description of their enclosing `describe`.
 3. **Read the result from the `karma:run` output** (passed/failed tests and errors), not from the server's output. Red and green are both shown with this command.
+
+Use the commands for the shell you are running in:
+
+**PowerShell (Windows)**
+
+```powershell
+# 1. Already running? If this prints anything, don't start another one.
+Get-CimInstance Win32_Process -Filter "Name='node.exe'" | Where-Object { $_.CommandLine -match 'test:server' }
+
+# 1. Start it detached (returns immediately; survives the end of this PowerShell session)
+Start-Process -FilePath "cmd.exe" -ArgumentList "/c", "npm run test:server > .test-server.log 2>&1" -WindowStyle Hidden
+
+# 1. Ready? Only right before the first karma:run. Short waits, never long sleeps.
+#    Ready when the initial run finished: "Executed N of N" or "TOTAL:"
+Start-Sleep -Seconds 10; Get-Content .test-server.log -Tail 30
+
+# 2-3. Run the tests by description and read this output. Use npm.cmd, not npm:
+#      the npm.ps1 shim can swallow the "--" and the description never reaches karma:run.
+npm.cmd run karma:run -- "libera recursos al cancelar"
+```
+
+Don't use `Start-Job` or `&`-backgrounding for the server: a job dies when the PowerShell session that created it ends.
+
+**bash / zsh (Linux, macOS, Git Bash, WSL)**
+
+```bash
+pgrep -f "test:server"                                   # already running?
+nohup npm run test:server > .test-server.log 2>&1 &      # start detached
+sleep 10; tail -n 30 .test-server.log                    # ready? ("Executed N of N" / "TOTAL:")
+npm run karma:run -- "libera recursos al cancelar"       # run by description
+```
+
+If your tool has its own background mode for long-running commands (for example, Claude Code's Bash `run_in_background`), you may use it instead of the detached launch above.
+
+In every shell: never stop the server and never start a second one. If it crashes (the log shows it exited, or `karma:run` can't connect), start it again the same way.
 
 If either script is missing, use the project's usual test command instead.
 
