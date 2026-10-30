@@ -1,5 +1,6 @@
 ﻿# Instala el schema sdd-incremental, la config de ejemplo y los skills sdd-* en un proyecto
-# que ya usa OpenSpec. Idempotente: no toca los skills openspec-* ni una config.yaml existente.
+# que ya usa OpenSpec, y desactiva la telemetría de OpenSpec en la configuración global del
+# usuario. Idempotente: no toca los skills openspec-* ni una config.yaml existente.
 # Equivalente a install.sh para Windows PowerShell 5.1+ y PowerShell 7+.
 #
 # Uso: scripts\install.ps1 <ruta-proyecto> [-Tools claude,codex,github-copilot,opencode]
@@ -77,6 +78,33 @@ foreach ($Tool in $Tools) {
         Copy-Fresh $Skill.FullName (Join-Path $SkillsDir $Skill.Name)
     }
     Write-Host "OK  Skills  $($ToolDirs[$Tool])/sdd-*"
+}
+
+# 4. Telemetría de OpenSpec desactivada en la configuración global del usuario.
+#    OPENSPEC_TELEMETRY=0 evita que este mismo comando envíe telemetría.
+$PreviousTelemetry = $env:OPENSPEC_TELEMETRY
+$env:OPENSPEC_TELEMETRY = '0'
+try {
+    if (Get-Command openspec -ErrorAction SilentlyContinue) {
+        & openspec config set telemetry.enabled false | Out-Null
+    }
+    else {
+        & npx -y @fission-ai/openspec@latest config set telemetry.enabled false | Out-Null
+    }
+    $TelemetryOk = ($LASTEXITCODE -eq 0)
+}
+catch {
+    $TelemetryOk = $false
+}
+finally {
+    $env:OPENSPEC_TELEMETRY = $PreviousTelemetry
+}
+if ($TelemetryOk) {
+    Write-Host "OK  Telemetría de OpenSpec desactivada (config global: telemetry.enabled=false)"
+}
+else {
+    Write-Warning ("No se pudo desactivar la telemetría. Ejecútalo a mano: " +
+        "`$env:OPENSPEC_TELEMETRY='0'; npx @fission-ai/openspec@latest config set telemetry.enabled false")
 }
 
 Write-Host ""

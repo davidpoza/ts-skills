@@ -113,6 +113,8 @@ npx @fission-ai/openspec@latest schema validate sdd-incremental
 
 Usa en `--tools` solo los agentes que necesites, y los mismos en los dos comandos.
 
+Los scripts de instalación también **desactivan la telemetría de OpenSpec** en la configuración global del usuario (`openspec config set telemetry.enabled false`). Para cubrir también los procesos que no lean esa configuración, define además la variable de entorno `OPENSPEC_TELEMETRY=0` (en PowerShell: `[Environment]::SetEnvironmentVariable('OPENSPEC_TELEMETRY', '0', 'User')`) y reinicia el agente y las terminales.
+
 **En Windows** usa `install.ps1` desde PowerShell (Windows PowerShell 5.1 o PowerShell 7):
 
 ```powershell

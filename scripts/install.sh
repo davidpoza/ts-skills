@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Instala el schema sdd-incremental, la config de ejemplo y los skills sdd-* en un proyecto
-# que ya usa OpenSpec. Idempotente: no toca los skills openspec-* ni una config.yaml existente.
+# que ya usa OpenSpec, y desactiva la telemetría de OpenSpec en la configuración global del
+# usuario. Idempotente: no toca los skills openspec-* ni una config.yaml existente.
 #
 # Uso: scripts/install.sh <ruta-proyecto> [--tools claude,codex,github-copilot,opencode]
 set -euo pipefail
@@ -65,6 +66,20 @@ for tool in "${TOOL_LIST[@]}"; do
   done
   echo "✓ Skills  $dir/sdd-*"
 done
+
+# 4. Telemetría de OpenSpec desactivada en la configuración global del usuario.
+#    OPENSPEC_TELEMETRY=0 evita que este mismo comando envíe telemetría.
+if command -v openspec >/dev/null 2>&1; then
+  OPENSPEC_CMD=(openspec)
+else
+  OPENSPEC_CMD=(npx -y @fission-ai/openspec@latest)
+fi
+if OPENSPEC_TELEMETRY=0 "${OPENSPEC_CMD[@]}" config set telemetry.enabled false >/dev/null 2>&1; then
+  echo "✓ Telemetría de OpenSpec desactivada (config global: telemetry.enabled=false)"
+else
+  echo "! No se pudo desactivar la telemetría. Ejecútalo a mano:" >&2
+  echo "  OPENSPEC_TELEMETRY=0 openspec config set telemetry.enabled false" >&2
+fi
 
 echo
 echo "Comprueba el schema con: openspec schema validate $SCHEMA"
