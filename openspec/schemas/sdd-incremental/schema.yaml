@@ -460,3 +460,12 @@ apply:
       diffs or excerpts): name the files written or changed as `path:line`
       so the user reviews them in the IDE.
     - Never edit specs to match the code. Never commit.
+
+    Verification (`/opsx:verify` reads this instruction): the FIRST step,
+    before checking tasks, specs or design, is to build the project
+    explicitly with its own build command (the `build` script in
+    package.json, `ng build`, `mvn -q compile`, `./gradlew build -x test`,
+    `dotnet build`...; use what the project declares). If the build fails,
+    report every error as CRITICAL, state that the implementation cannot be
+    considered correct, and skip the rest of the verification until it
+    builds. Never fix the code during verification.

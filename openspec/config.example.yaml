@@ -12,6 +12,10 @@ context: |
   $sdd-pair en Codex), nunca con /opsx:apply. Cuando un flujo indique el siguiente paso para
   implementar, nombra /sdd-pair en lugar de /opsx:apply.
 
+  Verificación: /opsx:verify debe compilar el proyecto de forma explícita como PRIMER paso
+  (script build de package.json, ng build, mvn compile…). Si la compilación falla, cada error
+  es CRITICAL y la implementación no se da por buena: no se sigue verificando hasta que compile.
+
   # Añade aquí solo restricciones que el agente no pueda deducir leyendo el código. Ejemplo:
   # Stack: Spring Boot (backend), Angular (frontend)
   # Tests: JUnit 5 + Spring Boot Test; Jasmine/Karma en el frontend

@@ -152,7 +152,8 @@ When every test of the task is green:
 When all tasks are done:
 
 - Suggest a review with a clean context (`/code-review` or equivalent); don't review your own code.
-- Suggest `/opsx:verify` to check implementation against the specs, then `/opsx:archive` to merge the delta specs into `openspec/specs/`.
+- Build the project explicitly with its own build command (for example, `npm run build` or `ng build`) and report the result in one line. If it fails, report the errors and stop: the change is not done.
+- If it builds, suggest `/opsx:verify` to check implementation against the specs (it builds again as its first step), then `/opsx:archive` to merge the delta specs into `openspec/specs/`.
 
 ## Never
 
