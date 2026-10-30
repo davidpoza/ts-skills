@@ -42,12 +42,15 @@ One step = one test from the list:
 3. Write the **minimum code** that makes it pass. Nothing the test doesn't require.
 4. Run the tests and show that they pass (green).
 
-By default you do **1 step** and stop. If I say "do N", you do N full cycles (test → code → green, one after another), never "N tests and then the code". In a batch, show me the tests first and then the code: the tests are what I most need to review.
+By default you do **1 step** and stop. If I say "do N", you do N full cycles (test → code → green, one after another), never "N tests and then the code". In a batch, list the test files first and then the code files: the tests are what I most need to review.
+
+**Never paste code or tests into the conversation**: no code blocks, no diffs, no excerpts. I review them in my IDE. Tell me which files you wrote or changed, as `path:line` pointing to each test and each code change. For red and green, report only the outcome in one line (which test failed and why, or that it passed), not the full output.
 
 When you stop, send a micro message:
 
 ```
-✅ Passes "<test name>". <what I did in one line> (<file:line>)
+PASS "<test name>". <what I did in one line>
+Files: <test file:line>, <code file:line>
 Decided: <judgment call not in design.md, if any — otherwise omit>
 Change anything or continue with "<next test>"?
 ```
@@ -139,7 +142,7 @@ When every test of the task is green:
 1. Mark the task done at the `sourcePath` and `line` returned by the apply instructions: `- [ ]` → `- [x]`. First confirm that line still matches the task; if not, rerun the instructions. Only mark it when its specified behavior is fully implemented.
 2. Rerun `openspec instructions apply --change "<name>" --json` and confirm progress changed.
 3. Verify together any **manual verification** items of the task.
-4. If something repeats or looks messy, **suggest** the refactor; I decide. Refactor only with tests green and never mixed with new functionality.
+4. If something repeats or looks messy, **suggest** the refactor in words, pointing to `path:line`; I decide. Refactor only with tests green and never mixed with new functionality.
 5. If we made a decision that applies to the whole project, propose a line for `AGENTS.md` / `CLAUDE.md`.
 6. **Never commit.** Tell me it's a good commit point and suggest the message, separating functionality and refactor into different commits. I make the commit.
 7. Stop. Ask whether to continue with the next task (`/sdd-pair` again, or "continue").

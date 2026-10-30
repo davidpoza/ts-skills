@@ -34,4 +34,5 @@ operations:
       - Never change, skip or delete a test to make it pass; never edit specs to match the code
       - Keep the cognitive complexity of every function written or touched at 15 or less whenever possible; if it ends up above 15, report it and propose a refactor before continuing
       - "IMPERATIVE in Angular projects whose package.json declares test:server and karma:run: start `npm run test:server` once as a background process and keep it running all session (it never returns: never run it in the foreground or wait for it to finish; start it early, keep working, and check its log only right before the first karma:run with short ~10 s waits, never long sleeps); run only the needed tests with `npm run karma:run -- \"<test description>\"` and read the result from that command's output; never use ng test or npm test. In PowerShell start the server detached with Start-Process (not Start-Job) and use npm.cmd instead of npm so the -- reaches karma:run"
+      - Never paste code or tests into the conversation; name the files written or changed as path:line so the user reviews them in the IDE
       - Never commit; suggest the commit message instead

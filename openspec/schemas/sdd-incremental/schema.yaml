@@ -431,4 +431,7 @@ apply:
       only the needed tests by description with
       `npm run karma:run -- "<describe/it description>"` and read the result
       from that command's output. Never use `ng test` or `npm test` there.
+    - Never paste code or tests into the conversation (no code blocks,
+      diffs or excerpts): name the files written or changed as `path:line`
+      so the user reviews them in the IDE.
     - Never edit specs to match the code. Never commit.
