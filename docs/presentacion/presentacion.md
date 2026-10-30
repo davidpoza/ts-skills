@@ -207,7 +207,7 @@ Antes de proponer nada, la IA consulta las **reglas vigentes** y responde:
 
 **Specs y tareas**
 - Specs = reglas de negocio con escenarios (criterios de aceptación).
-- Tareas pequeñas: **1 ciclo TDD**, ~50 líneas, ≤ 3 ficheros.
+- El diseño fija la **complejidad** (bajo / medio / alto) y de ella sale el tamaño de las tareas: un cambio sencillo, **1–2 tareas**.
 - Cada tarea nombra su escenario y su test.
 
 </div>
@@ -239,7 +239,7 @@ Una tarea por ejecución. La IA **se detiene y pregunta** si:
 |---|---|
 | Requisitos inventados | Alcance aprobado + "pregunta, no supongas" |
 | Decisiones ocultas | Paradas ante decisiones no previstas en `design.md` |
-| 3.000 líneas sin revisar | 1 tarea, 1 ciclo TDD, parada en cada paso |
+| 3.000 líneas sin revisar | 1 tarea por ejecución, parada tras cada test |
 | Tests que validan lo inventado | Tests sacados de los escenarios aprobados |
 | Romper reglas existentes | `impact.md` + tests de regresión |
 | Complejidad innecesaria | Código mínimo + complejidad cognitiva ≤ 15 |
@@ -254,7 +254,7 @@ Una tarea por ejecución. La IA **se detiene y pregunta** si:
 [/opsx:explore]                 pensar si la necesidad no está clara
 /opsx:propose <descripción>     impacto → alcance → specs → diseño → tareas
    ↳ tú revisas y apruebas
-/sdd-pair                       1 tarea · 1 ciclo TDD · se detiene
+/sdd-pair                       1 tarea · se detiene tras cada test
    ↳ tú revisas cada ciclo y haces el commit
 /opsx:verify                    ¿el código cumple las specs?
 /opsx:archive                   las specs pasan a ser reglas vigentes

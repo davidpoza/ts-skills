@@ -261,14 +261,26 @@ artifacts:
     template: design.md
     instruction: |
       Create the design document that explains HOW to implement the change.
+      Always create it: tasks.md takes its granularity from the "Complejidad"
+      section. For a simple change it may contain only Complejidad and a few
+      Decisiones.
 
-      When to include design.md (create only if any apply):
-      - Cross-cutting change (multiple services/modules) or new architectural pattern
-      - New external dependency or significant data model changes
-      - Security, performance, or migration complexity
-      - Ambiguity that benefits from technical decisions before coding
+      **Complejidad** (first section) - decide the change's level and write it
+      down. Estimate:
+      - Lines of code created + modified + deleted (production and tests),
+        based on the affected code in impact.md and the decisions below.
+      - Business rules involved: requirements ADDED, MODIFIED or REMOVED in
+        this change's specs, plus the existing rules listed in impact.md under
+        "Reglas que deben seguir cumpliéndose".
 
-      Sections (exact Spanish headings from the template):
+      The level is the HIGHER of the two criteria:
+      - **bajo**: up to ~80 lines and at most 2 rules.
+      - **medio**: up to ~300 lines and at most 5 rules.
+      - **alto**: anything above.
+      Write the level, both estimates and one line explaining it. If the level
+      is alto and the change could be split into independent changes, say so.
+
+      Other sections (exact Spanish headings from the template):
       - **Contexto**: Only the current state and constraints needed to explain the approach. Reference the proposal for motivation and scope instead of restating them (e.g., "Ver proposal.md - Objetivos"). Objectives and non-objectives live in the proposal; do not add a goals section here.
       - **Decisiones**: Key technical choices with rationale (why X over Y?). Include alternatives considered for each decision.
       - **Riesgos / Compromisos**: Known limitations, things that could go wrong. Format: [Riesgo] → Mitigación
@@ -296,6 +308,7 @@ artifacts:
       NOT listed here will stop implementation for the user to decide.
     requires:
       - proposal
+      - specs
 
   - id: tasks
     generates: tasks.md
@@ -337,12 +350,24 @@ artifacts:
         carries neither. A final group is for integration checks only, not for
         the tests and docs an earlier group owed.
 
-      Incremental implementation rules (this schema is implemented one task
-      per run, one reviewed TDD cycle at a time, so task size is what keeps the
-      code reviewable):
-      - Each task is ONE small, vertical, verifiable behavior increment: about
-        one TDD cycle, roughly ≤50 changed lines and ≤3 files. If a task would
-        be bigger, split it.
+      Task granularity follows the level in design.md "Complejidad". A
+      simple change must not be broken into many tasks: implementation already
+      stops after every TDD cycle (one test), so tasks only group cycles into
+      reviewable units.
+      - **bajo**: 1-2 tasks in total. One task may cover several scenarios and
+        their tests, including the regression tests.
+      - **medio**: one task per requirement (typically 3-6 tasks), each with
+        the tests of its scenarios; regression tests go inside the task that
+        touches that rule.
+      - **alto**: one task per scenario (about one TDD cycle, roughly ≤50
+        changed lines and ≤3 files), grouped under one ## heading per
+        requirement; regression tests may be their own tasks. If this yields
+        more than ~15 tasks, propose splitting the change instead.
+      If design.md has no Complejidad section, stop and ask for it rather than
+      guessing the granularity.
+
+      Incremental implementation rules:
+      - Each task is a vertical, verifiable behavior increment.
       - Each task names the spec scenario it covers, the test(s) that prove it
         (names only, no code) and WHERE they run (endpoint, service,
         component...). Prefer the highest practical level.

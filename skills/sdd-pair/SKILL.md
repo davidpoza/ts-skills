@@ -23,7 +23,7 @@ Generating code is cheap; understanding it is not. Stopping often is the point, 
 
 - Take the **first unchecked task**. Show it with progress: `Task 2.1 (4/9): <description>`.
 - Check it against the current code. If the design or the task no longer fits, tell me before starting.
-- If the task looks bigger than ~50 lines or 3 files, propose splitting it into smaller checkbox tasks in tasks.md and wait for my approval before editing tasks.md.
+- A task may need several TDD cycles: its size follows the "Complejidad" level in design.md (bajo: few large tasks; alto: one scenario per task). You still stop after every cycle. If the task is clearly bigger than its level allows, propose splitting it into smaller checkbox tasks in tasks.md and wait for my approval before editing tasks.md.
 
 ## 3. Test list
 

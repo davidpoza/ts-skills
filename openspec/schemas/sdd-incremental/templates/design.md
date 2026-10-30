@@ -1,5 +1,13 @@
 # Diseño
 
+## Complejidad
+
+**Nivel:** <!-- bajo | medio | alto (the higher of the two criteria below) -->
+**Líneas estimadas:** <!-- created + modified + deleted, production and tests -->
+**Reglas de negocio implicadas:** <!-- requirements ADDED/MODIFIED/REMOVED in specs + rules to keep from impact.md -->
+
+<!-- One line: why this level. It sets the task granularity in tasks.md (bajo: 1-2 tasks; medio: one per requirement; alto: one per scenario). -->
+
 ## Contexto
 
 <!-- Current state and constraints that shape the approach. Motivation and objectives live in proposal.md; don't restate them. -->

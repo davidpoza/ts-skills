@@ -148,7 +148,7 @@ En Claude Code el skill es de invocación manual (`disable-model-invocation: tru
 - **Las specs son reglas de negocio, no implementación.** ✅ «Una operación cancelada libera sus recursos asignados». ❌ «`cancelOperation()` invoca `resourceRepository.deleteAll()`».
 - **Reglas aprobadas ≠ cambios propuestos ≠ comportamiento implementado.** Una spec nunca cambia porque el código haga otra cosa.
 - **Consultar antes de proponer.** `openspec/specs/` es lo vigente; `openspec/changes/archive/` solo explica el porqué de decisiones pasadas.
-- **Pequeño y vertical.** Changes de pocos requisitos; tareas de un ciclo TDD (~50 líneas, ≤3 ficheros).
+- **Pequeño y vertical.** Changes de pocos requisitos. El diseño fija la complejidad del cambio (bajo, medio o alto, según líneas estimadas y reglas de negocio implicadas) y de ella sale el tamaño de las tareas: un cambio sencillo tiene 1–2 tareas, uno complejo una por escenario. La implementación para igualmente tras cada test.
 - **Complejidad cognitiva ≤ 15** (definición de SonarSource) en cada función que se escribe o se toca, siempre que sea posible. Si queda por encima, `/sdd-pair` lo avisa y propone un refactor antes de seguir; solo se acepta más de 15 con tu aprobación y un motivo.
 - **Sugerir, no decidir.** Patrones, refactors y commits los decides tú.
 
