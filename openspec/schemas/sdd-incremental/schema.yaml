@@ -283,6 +283,21 @@ artifacts:
       Other sections (exact Spanish headings from the template):
       - **Contexto**: Only the current state and constraints needed to explain the approach. Reference the proposal for motivation and scope instead of restating them (e.g., "Ver proposal.md - Objetivos"). Objectives and non-objectives live in the proposal; do not add a goals section here.
       - **Decisiones**: Key technical choices with rationale (why X over Y?). Include alternatives considered for each decision.
+      - **Diseño y layout** (frontend changes only; omit the section
+        otherwise): how the solution looks and is laid out. Cover only what
+        applies:
+        - Screens or views affected, and where the new elements go in them.
+        - Layout and visual hierarchy: order, grouping, what stands out.
+        - States: empty, loading, error, success, disabled.
+        - Interaction: what the user clicks or types and what they see next.
+        - Responsive behavior and accessibility needs, if they matter here.
+        - Components that implement it, reusing existing ones and the
+          project's styles before creating new ones.
+        - Reference to an existing design (Figma, mockup, screenshot) or to an
+          existing screen whose style it must follow.
+        If there is no design reference and the layout is not obvious, ask the
+        user for one, or propose a small text wireframe (a few lines) for
+        approval. Never decide the layout silently.
       - **Riesgos / Compromisos**: Known limitations, things that could go wrong. Format: [Riesgo] → Mitigación
       - **Plan de migración**: Steps to deploy, rollback strategy (only if applicable).
       - **Preguntas abiertas**: Unknowns that can safely be answered later without
@@ -375,7 +390,9 @@ artifacts:
         entity"): infrastructure is built inside the first behavior task that
         needs it.
       - Scenarios that cannot be tested well (for example, visual ones) get a
-        task marked `(verificación manual)`.
+        task marked `(verificación manual)`. For frontend changes, every point
+        of design.md "Diseño y layout" that no automated test covers is
+        checked in a `(verificación manual)` task.
       - Every rule listed under "Reglas que deben seguir cumpliéndose" in
         impact.md gets a regression task (or is cited by an existing task that
         already tests it).
