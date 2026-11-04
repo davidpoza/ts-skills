@@ -18,4 +18,7 @@
 
 ## Preguntas para decidir
 
-<!-- One question per line, with your suggested answer. No assumptions. -->
+- <!-- question --> — Sugerencia: <!-- your suggested answer -->
+  **Decisión:** pendiente
+
+<!-- One question per bullet. Replace "pendiente" with the user's answer once given; the proposal is not written while any decision is pending. No assumptions. -->

@@ -40,7 +40,10 @@ artifacts:
         the only artifact before design.md that names code; the proposal stays
         functional.
       - **Preguntas para decidir**: decisions that belong to the human. One
-        question per bullet, each with your suggested answer.
+        question per bullet, with your suggested answer and a decision line
+        that starts as pending:
+        `- <question> — Sugerencia: <your answer>` followed by
+        `  **Decisión:** pendiente`.
 
       Rules:
       - Do not invent requirements. Missing information becomes a question,
@@ -49,8 +52,13 @@ artifacts:
       - If there are no specs yet (new project), say so in one line and keep
         only "Código / componentes / API / servicios afectados" and
         "Preguntas para decidir".
-      - Keep it under one page. If the user has not answered the blocking
-        questions, stop after writing this artifact and ask them.
+      - Keep it under one page. If there is any question, stop after writing
+        this artifact and ask the user, one question at a time.
+      - When the user answers, replace `pendiente` with their decision in
+        impact.md: `**Decisión:** <answer>`. If the user accepts your
+        suggestion, write it as their decision; if they delegate it ("decide
+        tú"), write `<your choice> (delegada por el usuario)`. Your
+        suggestion alone is never a decision.
     requires: []
 
   - id: proposal
@@ -109,9 +117,14 @@ artifacts:
       rejects a zero-delta change otherwise. Do not invent a requirement just
       to satisfy validation.
 
-      Build on impact.md: respect the answers the user gave to its questions and
-      do not resolve its conflicts on your own. If a blocking question is still
-      unanswered, ask before writing the proposal.
+      Build on impact.md. Before writing the proposal, EVERY question under
+      "Preguntas para decidir" must have been answered by the user in the
+      conversation, and its answer recorded in impact.md as
+      `**Decisión:** <answer>`. If any decision is still `pendiente` or
+      missing, do not write the proposal: ask the user, wait for the answer,
+      update impact.md, and only then continue. Do not resolve conflicts or
+      answer questions on your own. The proposal must be consistent with every
+      recorded decision.
 
       Keep the change small and vertical. If it needs more than ~3 new
       requirements, or touches several unrelated capabilities, propose
