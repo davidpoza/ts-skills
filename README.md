@@ -104,11 +104,21 @@ No se modifica OpenSpec: se usa su CLI oficial y sus puntos de extensión docume
 
 Requiere Node ≥ 20.19.
 
+**1. Instala el CLI de OpenSpec de forma global** (una vez por máquina):
+
+```bash
+npm i -g @fission-ai/openspec
+```
+
+Es imprescindible: los skills de OpenSpec y `/sdd-pair` ejecutan el comando `openspec` directamente, así que tiene que estar en el `PATH` del agente. Comprueba que está con `openspec --version`. Para actualizarlo más adelante, vuelve a ejecutar el mismo comando y después `openspec update` en cada proyecto.
+
+**2. Inicializa OpenSpec e instala este flujo en el proyecto:**
+
 ```bash
 cd mi-proyecto
-npx @fission-ai/openspec@latest init --tools claude,codex,github-copilot,opencode
+openspec init --tools claude,codex,github-copilot,opencode
 /ruta/a/ts-skills/scripts/install.sh . --tools claude,codex,github-copilot,opencode
-npx @fission-ai/openspec@latest schema validate sdd-incremental
+openspec schema validate sdd-incremental
 ```
 
 Usa en `--tools` solo los agentes que necesites, y los mismos en los dos comandos.
@@ -118,8 +128,9 @@ Los scripts de instalación también **desactivan la telemetría de OpenSpec** e
 **En Windows** usa `install.ps1` desde PowerShell (Windows PowerShell 5.1 o PowerShell 7):
 
 ```powershell
+npm i -g @fission-ai/openspec
 cd C:\Users\<usuario>\dev\mi-proyecto
-npx @fission-ai/openspec@latest init --tools opencode
+openspec init --tools opencode
 powershell -ExecutionPolicy Bypass -File C:\Users\<usuario>\dev\ts-skills\scripts\install.ps1 . -Tools opencode
 ```
 
