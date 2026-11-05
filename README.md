@@ -86,18 +86,10 @@ flowchart TD
 | Paso | Comando | Qué haces tú |
 |---|---|---|
 | 0. Pensar (opcional) | `/opsx:explore` | Aclaras qué quieres, comparas opciones y ves qué reglas afecta |
-| 1. Proponer | `/opsx:propose <descripción>` | Respondes las preguntas de `impact.md` y revisas specs y tareas |
+| 1. Proponer | `/opsx:propose <descripción>` | Respondes las preguntas de `impact.md` y revisas los artefactos de proposal, design y specs |
 | 2. Implementar | `/sdd-pair` (una vez por tarea) | Apruebas la lista de tests y revisas cada ciclo |
 | 3. Cerrar | `/opsx:verify` → `/opsx:archive` | Confirmas que el código cumple las specs |
 
 
 
-## Principios
 
-- **No inventar.** Lo que falta se pregunta, no se rellena.
-- **Las specs son reglas de negocio, no implementación.** ✅ «Una operación cancelada libera sus recursos asignados». ❌ «`cancelOperation()` invoca `resourceRepository.deleteAll()`».
-- **Reglas aprobadas ≠ cambios propuestos ≠ comportamiento implementado.** Una spec nunca cambia porque el código haga otra cosa.
-- **Consultar antes de proponer.** `openspec/specs/` es lo vigente; `openspec/changes/archive/` solo explica el porqué de decisiones pasadas.
-- **Pequeño y vertical.** Changes de pocos requisitos. El diseño fija la complejidad del cambio (bajo, medio o alto, según líneas estimadas y reglas de negocio implicadas) y de ella sale el tamaño de las tareas: un cambio sencillo tiene 1–2 tareas, uno complejo una por escenario. La implementación para igualmente tras cada test.
-- **Complejidad cognitiva ≤ 15** (definición de SonarSource) en cada función que se escribe o se toca, siempre que sea posible. Si queda por encima, `/sdd-pair` lo avisa y propone un refactor antes de seguir; solo se acepta más de 15 con tu aprobación y un motivo.
-- **Sugerir, no decidir.** Patrones, refactors y commits los decides tú.
