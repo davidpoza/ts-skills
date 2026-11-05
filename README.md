@@ -15,10 +15,13 @@ Requiere Node ≥ 20.19.
 
 ```bash
 npm i -g @fission-ai/openspec
+openspec config set telemetry.enabled false
 ```
 
-
 **2. Inicializa OpenSpec e instala este flujo en el proyecto:**
+(una vez por proyecto):
+
+En Linux bash:
 
 ```bash
 cd mi-proyecto
@@ -26,7 +29,7 @@ openspec init --tools roocode,opencode
 curl -fsSL https://raw.githubusercontent.com/davidpoza/ts-skills/main/scripts/install.sh | bash -s -- . --tools roocode,opencode
 ```
 
-En PowerShell:
+En Windows PowerShell:
 
 ```powershell
 cd C:\Users\<usuario>\dev\mi-proyecto
@@ -38,15 +41,6 @@ openspec init --tools roocode,opencode
 
 `/opsx:verify` no viene en el perfil por defecto de OpenSpec. Actívalo con `openspec config profile` (Change workflows only → verify) y luego `openspec update`.
 
-### Invocación por agente
-
-| Agente | Dónde se instalan | Cómo se invocan |
-|---|---|---|
-| Claude Code | `.claude/skills/` | `/sdd-pair` |
-| Codex | `.agents/skills/` | `$sdd-pair` |
-| GitHub Copilot | `.github/skills/` | skill `sdd-pair` |
-| OpenCode | `.opencode/skills/` | pide al agente que use el skill `sdd-pair`; los comandos de OpenSpec son `/opsx-propose`, `/opsx-explore`… |
-| Roo Code | `.roo/skills/` | pide al agente que use el skill `sdd-pair`; los comandos de OpenSpec son `/opsx-propose`, `/opsx-explore`… |
 
 ## Flujo
 
