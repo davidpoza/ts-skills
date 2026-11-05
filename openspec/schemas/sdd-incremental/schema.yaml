@@ -293,6 +293,11 @@ artifacts:
       Write the level, both estimates and one line explaining it. If the level
       is alto and the change could be split into independent changes, say so.
 
+      **Resumen** (right after Complejidad): the whole design in ONE single
+      sentence - the approach and its key decision, so a reader gets it
+      without reading the rest. Exactly one sentence, never a list or a
+      paragraph. Write it last, once the other sections are settled.
+
       Other sections (exact Spanish headings from the template):
       - **Contexto**: Only the current state and constraints needed to explain the approach. Reference the proposal for motivation and scope instead of restating them (e.g., "Ver proposal.md - Objetivos"). Objectives and non-objectives live in the proposal; do not add a goals section here.
       - **Decisiones**: Key technical choices with rationale (why X over Y?). Include alternatives considered for each decision.

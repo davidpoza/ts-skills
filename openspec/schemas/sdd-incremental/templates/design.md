@@ -8,6 +8,10 @@
 
 <!-- One line: why this level. It sets the task granularity in tasks.md (bajo: 1-2 tasks; medio: one per requirement; alto: one per scenario). -->
 
+## Resumen
+
+<!-- The whole design in ONE single sentence: the approach and its key decision. -->
+
 ## Contexto
 
 <!-- Current state and constraints that shape the approach. Motivation and objectives live in proposal.md; don't restate them. -->
