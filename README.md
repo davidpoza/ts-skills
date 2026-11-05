@@ -116,8 +116,8 @@ Es imprescindible: los skills de OpenSpec y `/sdd-pair` ejecutan el comando `ope
 
 ```bash
 cd mi-proyecto
-openspec init --tools claude,codex,github-copilot,opencode
-/ruta/a/ts-skills/scripts/install.sh . --tools claude,codex,github-copilot,opencode
+openspec init --tools roocode,opencode
+/ruta/a/ts-skills/scripts/install.sh . --tools roocode,opencode
 openspec schema validate sdd-incremental
 ```
 
