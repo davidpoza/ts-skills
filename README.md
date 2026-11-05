@@ -130,8 +130,8 @@ Los scripts de instalación también **desactivan la telemetría de OpenSpec** e
 ```powershell
 npm i -g @fission-ai/openspec
 cd C:\Users\<usuario>\dev\mi-proyecto
-openspec init --tools opencode
-powershell -ExecutionPolicy Bypass -File C:\Users\<usuario>\dev\ts-skills\scripts\install.ps1 . -Tools opencode
+openspec init --tools roocode,opencode
+powershell -ExecutionPolicy Bypass -File C:\Users\<usuario>\dev\ts-skills\scripts\install.ps1 . -Tools roocode,opencode
 ```
 
 - `-Tools` acepta varios agentes separados por comas: `-Tools claude,opencode`.
