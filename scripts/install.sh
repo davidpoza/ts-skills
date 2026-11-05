@@ -3,14 +3,17 @@
 # que ya usa OpenSpec, y desactiva la telemetría de OpenSpec en la configuración global del
 # usuario. Idempotente: no toca los skills openspec-* ni una config.yaml existente.
 #
-# Uso: scripts/install.sh <ruta-proyecto> [--tools claude,codex,github-copilot,opencode]
+# Uso desde un clon:  scripts/install.sh <ruta-proyecto> [--tools claude,codex,github-copilot,opencode,roocode]
+# Uso sin clonar:     curl -fsSL https://raw.githubusercontent.com/davidpoza/ts-skills/main/scripts/install.sh \
+#                       | bash -s -- <ruta-proyecto> [--tools ...]
+# Sin clon, descarga el repo de GitHub (rama o tag en TS_SKILLS_REF, por defecto main).
 set -euo pipefail
 
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SCHEMA=sdd-incremental
+REPO_ARCHIVE="https://github.com/davidpoza/ts-skills/archive/${TS_SKILLS_REF:-main}.tar.gz"
 
 usage() {
-  echo "Uso: $0 <ruta-proyecto> [--tools claude,codex,github-copilot,opencode]" >&2
+  echo "Uso: install.sh <ruta-proyecto> [--tools claude,codex,github-copilot,opencode,roocode]" >&2
   exit 1
 }
 
@@ -27,8 +30,20 @@ done
 
 if [[ ! -d "$TARGET/openspec" ]]; then
   echo "No existe $TARGET/openspec. Inicializa OpenSpec primero:" >&2
-  echo "  cd $TARGET && npx @fission-ai/openspec@latest init --tools $TOOLS" >&2
+  echo "  cd $TARGET && openspec init --tools $TOOLS" >&2
   exit 1
+fi
+
+# Origen de los ficheros: el clon donde está este script o, si se ejecuta sin clon
+# (por ejemplo, con curl | bash), una descarga temporal del repo.
+SCRIPT_PATH="${BASH_SOURCE[0]:-}"
+if [[ -n "$SCRIPT_PATH" && -f "$SCRIPT_PATH" && -d "$(dirname "$SCRIPT_PATH")/../openspec/schemas/$SCHEMA" ]]; then
+  REPO_DIR="$(cd "$(dirname "$SCRIPT_PATH")/.." && pwd)"
+else
+  REPO_DIR="$(mktemp -d)"
+  trap 'rm -rf "$REPO_DIR"' EXIT
+  echo "Descargando $REPO_ARCHIVE"
+  curl -fsSL "$REPO_ARCHIVE" | tar -xz -C "$REPO_DIR" --strip-components=1
 fi
 
 # 1. Schema
@@ -45,7 +60,7 @@ if [[ ! -f "$CONFIG" ]] || ! grep -qvE '^\s*(#|$|schema: spec-driven\s*$)' "$CON
 else
   echo "! openspec/config.yaml ya está personalizada; no se modifica."
   echo "  Pon 'schema: $SCHEMA' y copia lo que necesites de:"
-  echo "  $REPO_DIR/openspec/config.example.yaml"
+  echo "  https://github.com/davidpoza/ts-skills/blob/${TS_SKILLS_REF:-main}/openspec/config.example.yaml"
 fi
 
 # 3. Skills
@@ -56,7 +71,8 @@ for tool in "${TOOL_LIST[@]}"; do
     codex) dir=".agents/skills" ;;
     github-copilot) dir=".github/skills" ;;
     opencode) dir=".opencode/skills" ;;
-    *) echo "! Herramienta desconocida: $tool (usa claude, codex, github-copilot u opencode)" >&2; continue ;;
+    roocode) dir=".roo/skills" ;;
+    *) echo "! Herramienta desconocida: $tool (usa claude, codex, github-copilot, opencode o roocode)" >&2; continue ;;
   esac
   mkdir -p "$TARGET/$dir"
   for skill in "$REPO_DIR"/skills/*/; do

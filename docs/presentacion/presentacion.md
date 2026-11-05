@@ -260,7 +260,7 @@ Una tarea por ejecución. La IA **se detiene y pregunta** si:
 /opsx:archive                   las specs pasan a ser reglas vigentes
 ```
 
-Funciona en **Claude Code, Codex, GitHub Copilot y OpenCode**.
+Funciona en **Claude Code, Codex, GitHub Copilot, OpenCode y Roo Code**.
 
 ---
 

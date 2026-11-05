@@ -3,7 +3,10 @@
 # usuario. Idempotente: no toca los skills openspec-* ni una config.yaml existente.
 # Equivalente a install.sh para Windows PowerShell 5.1+ y PowerShell 7+.
 #
-# Uso: scripts\install.ps1 <ruta-proyecto> [-Tools claude,codex,github-copilot,opencode]
+# Uso desde un clon:  scripts\install.ps1 <ruta-proyecto> [-Tools claude,codex,github-copilot,opencode,roocode]
+# Uso sin clonar:     & ([scriptblock]::Create((Invoke-RestMethod https://raw.githubusercontent.com/davidpoza/ts-skills/main/scripts/install.ps1).TrimStart([char]0xFEFF))) <ruta-proyecto> -Tools opencode
+#                     (TrimStart quita el BOM UTF-8 del fichero, que impediría crear el scriptblock)
+# Sin clon, descarga el repo de GitHub (rama o tag en $env:TS_SKILLS_REF, por defecto main).
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true, Position = 0)]
@@ -14,13 +17,14 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-$RepoDir = Split-Path -Parent $PSScriptRoot
 $Schema = 'sdd-incremental'
+$RepoRef = if ($env:TS_SKILLS_REF) { $env:TS_SKILLS_REF } else { 'main' }
 $ToolDirs = @{
     'claude'         = '.claude/skills'
     'codex'          = '.agents/skills'
     'github-copilot' = '.github/skills'
     'opencode'       = '.opencode/skills'
+    'roocode'        = '.roo/skills'
 }
 
 $Target = (Resolve-Path -LiteralPath $Target).Path
@@ -30,8 +34,27 @@ $Tools = @($Tools | ForEach-Object { $_ -split ',' } | ForEach-Object { $_.Trim(
 $OpenSpecDir = Join-Path $Target 'openspec'
 if (-not (Test-Path -LiteralPath $OpenSpecDir -PathType Container)) {
     [Console]::Error.WriteLine("No existe $OpenSpecDir. Inicializa OpenSpec primero:")
-    [Console]::Error.WriteLine("  cd $Target; npx @fission-ai/openspec@latest init --tools $($Tools -join ',')")
+    [Console]::Error.WriteLine("  cd $Target; openspec init --tools $($Tools -join ',')")
     exit 1
+}
+
+# Origen de los ficheros: el clon donde está este script o, si se ejecuta sin clon
+# (por ejemplo, desde Invoke-RestMethod), una descarga temporal del repo.
+$TempDir = $null
+if ($PSScriptRoot -and (Test-Path -LiteralPath (Join-Path (Split-Path -Parent $PSScriptRoot) "openspec/schemas/$Schema"))) {
+    $RepoDir = Split-Path -Parent $PSScriptRoot
+}
+else {
+    $TempDir = Join-Path ([IO.Path]::GetTempPath()) ("ts-skills-" + [guid]::NewGuid())
+    New-Item -ItemType Directory -Path $TempDir | Out-Null
+    $Archive = "https://github.com/davidpoza/ts-skills/archive/$RepoRef.zip"
+    Write-Host "Descargando $Archive"
+    # Windows PowerShell 5.1 puede no tener TLS 1.2 activado por defecto
+    [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+    $Zip = Join-Path $TempDir 'repo.zip'
+    Invoke-WebRequest -Uri $Archive -OutFile $Zip -UseBasicParsing
+    Expand-Archive -LiteralPath $Zip -DestinationPath $TempDir
+    $RepoDir = (Get-ChildItem -LiteralPath $TempDir -Directory | Select-Object -First 1).FullName
 }
 
 function Copy-Fresh([string]$Source, [string]$Destination) {
@@ -59,7 +82,7 @@ if (Test-Path -LiteralPath $Config) {
 if ($Customized) {
     Write-Host "!   openspec\config.yaml ya está personalizada; no se modifica."
     Write-Host "    Pon 'schema: $Schema' y copia lo que necesites de:"
-    Write-Host "    $ExampleConfig"
+    Write-Host "    https://github.com/davidpoza/ts-skills/blob/$RepoRef/openspec/config.example.yaml"
 }
 else {
     Copy-Item -LiteralPath $ExampleConfig -Destination $Config -Force
@@ -69,7 +92,7 @@ else {
 # 3. Skills
 foreach ($Tool in $Tools) {
     if (-not $ToolDirs.ContainsKey($Tool)) {
-        Write-Warning "Herramienta desconocida: $Tool (usa claude, codex, github-copilot u opencode)"
+        Write-Warning "Herramienta desconocida: $Tool (usa claude, codex, github-copilot, opencode o roocode)"
         continue
     }
     $SkillsDir = Join-Path $Target $ToolDirs[$Tool]
@@ -107,5 +130,9 @@ else {
         "`$env:OPENSPEC_TELEMETRY='0'; npx @fission-ai/openspec@latest config set telemetry.enabled false")
 }
 
+if ($TempDir) {
+    Remove-Item -LiteralPath $TempDir -Recurse -Force
+}
+
 Write-Host ""
-Write-Host "Comprueba el schema con: npx @fission-ai/openspec@latest schema validate $Schema"
+Write-Host "Comprueba el schema con: openspec schema validate $Schema"
