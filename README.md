@@ -29,7 +29,7 @@ openspec init --tools roocode,opencode
 curl -fsSL https://raw.githubusercontent.com/davidpoza/ts-skills/main/scripts/install.sh | bash -s -- . --tools roocode,opencode
 ```
 
-En Windows PowerShell:
+En Windows PowerShell (comando "terminal"):
 
 ```powershell
 cd C:\Users\<usuario>\dev\mi-proyecto
@@ -38,8 +38,7 @@ openspec init --tools roocode,opencode
 ```
 
 
-
-`/opsx:verify` no viene en el perfil por defecto de OpenSpec. Actívalo con `openspec config profile` (Change workflows only → verify) y luego `openspec update`.
+`/opsx:verify` no viene en el perfil por defecto de OpenSpec. Actívalo con `openspec config profile` (Change Delivery and workflows → verify) y luego `openspec update`.
 
 
 ## Flujo
