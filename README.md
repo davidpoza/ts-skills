@@ -25,7 +25,8 @@ En Linux bash:
 
 ```bash
 cd mi-proyecto
-openspec init --tools roocode opencode
+openspec init --tools opencode
+openspec init --tools roocode
 curl -fsSL https://raw.githubusercontent.com/davidpoza/ts-skills/main/scripts/install.sh | bash -s -- . --tools roocode,opencode
 ```
 
