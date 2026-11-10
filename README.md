@@ -14,7 +14,7 @@ Requiere Node ≥ 20.19.
 **1. Instala el CLI de OpenSpec de forma global** (una vez por máquina):
 
 ```bash
-npm i -g @fission-ai/openspec
+npm i -g @fission-ai/openspec@1.16.1
 openspec config set telemetry.enabled false
 ```
 
