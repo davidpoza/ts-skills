@@ -34,7 +34,8 @@ En Windows PowerShell (comando "terminal"):
 
 ```powershell
 cd C:\Users\<usuario>\dev\mi-proyecto
-openspec init --tools roocode,opencode
+openspec init --tools opencode
+openspec init --tools roocode
 & ([scriptblock]::Create((Invoke-RestMethod https://raw.githubusercontent.com/davidpoza/ts-skills/main/scripts/install.ps1).TrimStart([char]0xFEFF))) . -Tools roocode,opencode
 ```
 
