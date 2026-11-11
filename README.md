@@ -14,7 +14,7 @@ Requiere Node ≥ 20.19.
 **1. Instala el CLI de OpenSpec de forma global** (una vez por máquina):
 
 ```bash
-npm i -g @fission-ai/openspec
+npm i -g @fission-ai/openspec@1.16.1
 openspec config set telemetry.enabled false
 ```
 
@@ -25,7 +25,8 @@ En Linux bash:
 
 ```bash
 cd mi-proyecto
-openspec init --tools roocode,opencode
+openspec init --tools opencode
+openspec init --tools roocode
 curl -fsSL https://raw.githubusercontent.com/davidpoza/ts-skills/main/scripts/install.sh | bash -s -- . --tools roocode,opencode
 ```
 
