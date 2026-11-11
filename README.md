@@ -18,6 +18,9 @@ npm i -g @fission-ai/openspec@1.16.1
 openspec config set telemetry.enabled false
 ```
 
+`/opsx:verify` no viene en el perfil por defecto de OpenSpec. Actívalo con `openspec config profile` (Change Delivery and workflows → verify) y luego `openspec update`.
+
+
 **2. Inicializa OpenSpec e instala este flujo en el proyecto:**
 (una vez por proyecto):
 
@@ -41,7 +44,7 @@ openspec init --tools roocode
 
 El script instala `sdd-pair` como skill y, en Roo Code, OpenCode y GitHub Copilot, también como comando (`.roo/commands/`, `.opencode/commands/`, `.github/prompts/`), igual que `openspec init` hace con `/opsx:*`. En Claude Code el skill ya se invoca como `/sdd-pair`, y en Codex como `$sdd-pair`.
 
-`/opsx:verify` no viene en el perfil por defecto de OpenSpec. Actívalo con `openspec config profile` (Change Delivery and workflows → verify) y luego `openspec update`.
+
 
 
 ## Flujo
