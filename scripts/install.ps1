@@ -1,4 +1,4 @@
-﻿# Instala el schema sdd-incremental, la config de ejemplo y los skills sdd-* en un proyecto
+﻿# Instala el schema sdd-incremental, la config de ejemplo y los skills sdd-* (también como comandos) en un proyecto
 # que ya usa OpenSpec, y desactiva la telemetría de OpenSpec en la configuración global del
 # usuario. Idempotente: no toca los skills openspec-* ni una config.yaml existente.
 # Equivalente a install.sh para Windows PowerShell 5.1+ y PowerShell 7+.
@@ -89,7 +89,44 @@ else {
     Write-Host "OK  Config  openspec\config.yaml"
 }
 
-# 3. Skills
+# 3. Skills y comandos
+#    Cada skill se instala también como comando con el mismo formato que usa 'openspec init'
+#    para /opsx:*. Claude y Codex no lo necesitan: Claude invoca los skills como /sdd-pair
+#    (un comando con el mismo nombre quedaría oculto por el skill) y Codex no tiene comandos
+#    por proyecto (los skills se invocan con $sdd-pair).
+$CommandDirs = @{
+    'github-copilot' = @('.github/prompts', '.prompt.md')
+    'opencode'       = @('.opencode/commands', '.md')
+    'roocode'        = @('.roo/commands', '.md')
+}
+$Utf8NoBom = New-Object System.Text.UTF8Encoding $false
+
+function New-SkillCommand([string]$Tool, [string]$Name, [string]$SkillFile, [string]$Destination) {
+    $Lines = @(Get-Content -LiteralPath $SkillFile -Encoding UTF8)
+    $End = -1
+    if ($Lines.Count -gt 0 -and $Lines[0] -match '^---\s*$') {
+        for ($i = 1; $i -lt $Lines.Count; $i++) {
+            if ($Lines[$i] -match '^---\s*$') { $End = $i; break }
+        }
+    }
+    $Description = ''
+    if ($End -gt 0) {
+        $Description = @($Lines[1..($End - 1)] | Where-Object { $_ -match '^description:' })[0]
+    }
+    $Body = if ($End -ge 0) { $Lines[($End + 1)..($Lines.Count - 1)] } else { $Lines }
+
+    $Out = New-Object System.Collections.Generic.List[string]
+    if ($Tool -eq 'roocode') {
+        $Out.Add("# $Name"); $Out.Add(''); $Out.Add(($Description -replace '^description:\s*', ''))
+    }
+    else {
+        $Out.Add('---'); $Out.Add($Description); $Out.Add('---')
+    }
+    foreach ($Line in $Body) { $Out.Add($Line) }
+    if ($Tool -eq 'opencode') { $Out.Add(''); $Out.Add('**Provided arguments**: $ARGUMENTS') }
+    [IO.File]::WriteAllText($Destination, (($Out -join "`n") + "`n"), $Utf8NoBom)
+}
+
 foreach ($Tool in $Tools) {
     if (-not $ToolDirs.ContainsKey($Tool)) {
         Write-Warning "Herramienta desconocida: $Tool (usa claude, codex, github-copilot, opencode o roocode)"
@@ -97,10 +134,20 @@ foreach ($Tool in $Tools) {
     }
     $SkillsDir = Join-Path $Target $ToolDirs[$Tool]
     New-Item -ItemType Directory -Force -Path $SkillsDir | Out-Null
+    $CommandDir = $null
+    if ($CommandDirs.ContainsKey($Tool)) {
+        $CommandDir = Join-Path $Target $CommandDirs[$Tool][0]
+        $CommandExt = $CommandDirs[$Tool][1]
+        New-Item -ItemType Directory -Force -Path $CommandDir | Out-Null
+    }
     foreach ($Skill in Get-ChildItem -LiteralPath (Join-Path $RepoDir 'skills') -Directory) {
         Copy-Fresh $Skill.FullName (Join-Path $SkillsDir $Skill.Name)
+        if ($CommandDir) {
+            New-SkillCommand $Tool $Skill.Name (Join-Path $Skill.FullName 'SKILL.md') (Join-Path $CommandDir "$($Skill.Name)$CommandExt")
+        }
     }
     Write-Host "OK  Skills  $($ToolDirs[$Tool])/sdd-*"
+    if ($CommandDir) { Write-Host "OK  Comandos $($CommandDirs[$Tool][0])/sdd-*$CommandExt" }
 }
 
 # 4. Telemetría de OpenSpec desactivada en la configuración global del usuario.

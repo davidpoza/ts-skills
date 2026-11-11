@@ -37,6 +37,7 @@ openspec init --tools roocode,opencode
 & ([scriptblock]::Create((Invoke-RestMethod https://raw.githubusercontent.com/davidpoza/ts-skills/main/scripts/install.ps1).TrimStart([char]0xFEFF))) . -Tools roocode,opencode
 ```
 
+El script instala `sdd-pair` como skill y, en Roo Code, OpenCode y GitHub Copilot, también como comando (`.roo/commands/`, `.opencode/commands/`, `.github/prompts/`), igual que `openspec init` hace con `/opsx:*`. En Claude Code el skill ya se invoca como `/sdd-pair`, y en Codex como `$sdd-pair`.
 
 `/opsx:verify` no viene en el perfil por defecto de OpenSpec. Actívalo con `openspec config profile` (Change Delivery and workflows → verify) y luego `openspec update`.
 

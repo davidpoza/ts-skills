@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Instala el schema sdd-incremental, la config de ejemplo y los skills sdd-* en un proyecto
+# Instala el schema sdd-incremental, la config de ejemplo y los skills sdd-* (también como comandos) en un proyecto
 # que ya usa OpenSpec, y desactiva la telemetría de OpenSpec en la configuración global del
 # usuario. Idempotente: no toca los skills openspec-* ni una config.yaml existente.
 #
@@ -63,24 +63,45 @@ else
   echo "  https://github.com/davidpoza/ts-skills/blob/${TS_SKILLS_REF:-main}/openspec/config.example.yaml"
 fi
 
-# 3. Skills
+# 3. Skills y comandos
+#    Cada skill se instala también como comando con el mismo formato que usa 'openspec init'
+#    para /opsx:*. Claude y Codex no lo necesitan: Claude invoca los skills como /sdd-pair
+#    (un comando con el mismo nombre quedaría oculto por el skill) y Codex no tiene comandos
+#    por proyecto (los skills se invocan con $sdd-pair).
+skill_description() { awk 'NR > 1 && /^---[[:space:]]*$/ { exit } NR > 1 && /^description:/' "$1"; }
+skill_body() { awk 'NR == 1 && /^---[[:space:]]*$/ { fm = 1; next } fm && /^---[[:space:]]*$/ { fm = 0; next } !fm' "$1"; }
+
 IFS=',' read -ra TOOL_LIST <<< "$TOOLS"
 for tool in "${TOOL_LIST[@]}"; do
+  cmd_dir=""
   case "$tool" in
     claude) dir=".claude/skills" ;;
     codex) dir=".agents/skills" ;;
-    github-copilot) dir=".github/skills" ;;
-    opencode) dir=".opencode/skills" ;;
-    roocode) dir=".roo/skills" ;;
+    github-copilot) dir=".github/skills"; cmd_dir=".github/prompts"; cmd_ext=".prompt.md" ;;
+    opencode) dir=".opencode/skills"; cmd_dir=".opencode/commands"; cmd_ext=".md" ;;
+    roocode) dir=".roo/skills"; cmd_dir=".roo/commands"; cmd_ext=".md" ;;
     *) echo "! Herramienta desconocida: $tool (usa claude, codex, github-copilot, opencode o roocode)" >&2; continue ;;
   esac
   mkdir -p "$TARGET/$dir"
+  [[ -z "$cmd_dir" ]] || mkdir -p "$TARGET/$cmd_dir"
   for skill in "$REPO_DIR"/skills/*/; do
     name="$(basename "$skill")"
     rm -rf "$TARGET/$dir/$name"
     cp -R "$skill" "$TARGET/$dir/$name"
+    [[ -n "$cmd_dir" ]] || continue
+    src="$skill/SKILL.md"
+    {
+      if [[ "$tool" == roocode ]]; then
+        printf '# %s\n\n%s\n' "$name" "$(skill_description "$src" | sed 's/^description:[[:space:]]*//')"
+      else
+        printf -- '---\n%s\n---\n' "$(skill_description "$src")"
+      fi
+      skill_body "$src"
+      [[ "$tool" != opencode ]] || printf '\n**Provided arguments**: $ARGUMENTS\n'
+    } > "$TARGET/$cmd_dir/$name$cmd_ext"
   done
   echo "✓ Skills  $dir/sdd-*"
+  [[ -z "$cmd_dir" ]] || echo "✓ Comandos $cmd_dir/sdd-*$cmd_ext"
 done
 
 # 4. Telemetría de OpenSpec desactivada en la configuración global del usuario.
