@@ -441,11 +441,10 @@ artifacts:
 
       Reference specs for what needs to be built, design for how to build it.
 
-      Next step: this project implements with the `sdd-pair` skill, never with
-      the apply workflow. When the planning artifacts are ready and you tell
-      the user how to continue, name `/sdd-pair` (`$sdd-pair` in Codex; the
-      `sdd-pair` skill in other agents) instead of `/opsx:apply`, `/opsx-apply`
-      or `openspec-apply-change`.
+      Next step: when the planning artifacts are ready and you tell the user
+      how to continue, offer both ways to implement: `/sdd-pair` (`$sdd-pair`
+      in Codex; the `sdd-pair` skill in other agents) for supervised TDD, one
+      task at a time, or `/opsx:apply` for the default apply workflow.
     requires:
       - specs
       - design
@@ -454,28 +453,10 @@ apply:
   requires: [ tasks ]
   tracks: tasks.md
   instruction: |
-    Supervised incremental implementation. Prefer the `sdd-pair` skill
-    (`/sdd-pair`); if you are running another apply workflow, these rules
-    still take precedence over "keep going through tasks":
+    Implement the pending tasks following the specs and design. The
+    `sdd-pair` skill (`/sdd-pair`) is a supervised, step-by-step TDD
+    alternative with its own rules; they do not apply to this workflow.
 
-    - Work on ONE pending task per run: the first unchecked one.
-    - Before coding, list the tests for that task (names + where they run)
-      and wait for the user's approval.
-    - TDD cycle per test: write the test, run it and show it fails (red),
-      write the minimum code to pass, run the tests and show they pass (green).
-    - After one cycle, STOP and wait for the user. "Do N" means N complete
-      cycles, never N tests first and then the code.
-    - Mark the task `- [x]` only when all its tests are green.
-    - Stop immediately if: a design decision is not covered by design.md;
-      you want to add something not specified; a test would need to be changed,
-      skipped or deleted to pass; two attempts failed to reach green; the step
-      exceeds ~50 lines or 3 files (propose splitting the task); the code
-      contradicts an approved spec.
-    - Every function or method written or touched must have a cognitive
-      complexity of 15 or less (SonarSource definition) whenever possible.
-      Measure it with the project's analyzer when configured. If it ends up
-      above 15, report it and propose a refactor (tests green, separate
-      step); it stays above 15 only with the user's explicit approval.
     - Angular projects (IMPERATIVE): if the project is Angular and
       package.json declares both `test:server` and `karma:run`, start
       `npm run test:server` once as a background process and keep it running
@@ -491,10 +472,6 @@ apply:
       only the needed tests by description with
       `npm run karma:run -- "<describe/it description>"` and read the result
       from that command's output. Never use `ng test` or `npm test` there.
-    - Never paste code or tests into the conversation (no code blocks,
-      diffs or excerpts): name the files written or changed as `path:line`
-      so the user reviews them in the IDE.
-    - Never edit specs to match the code. Never commit.
 
     Verification (`/opsx:verify` reads this instruction): the FIRST step,
     before checking tasks, specs or design, is to build the project

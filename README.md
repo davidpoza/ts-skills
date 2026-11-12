@@ -93,6 +93,7 @@ flowchart TD
 | 0. Pensar (opcional) | `/opsx:explore` | Aclaras qué quieres, comparas opciones y ves qué reglas afecta |
 | 1. Proponer | `/opsx:propose <descripción>` | Respondes las preguntas de `impact.md` y revisas los artefactos de proposal, design y specs |
 | 2. Implementar | `/sdd-pair` (una vez por tarea) | Apruebas la lista de tests y revisas cada ciclo |
+| 2. Implementar (alternativa) | `/opsx:apply` | Flujo por defecto de OpenSpec: implementa las tareas sin parar en cada ciclo |
 | 3. Cerrar | `/opsx:verify` → `/opsx:archive` | Confirmas que el código cumple las specs |
 
 

@@ -8,9 +8,9 @@ context: |
   (## Purpose, ## ADDED/MODIFIED/REMOVED/RENAMED Requirements, ### Requirement:, #### Scenario:)
   y las palabras clave SHALL/MUST y WHEN/THEN.
 
-  Implementación: este proyecto implementa siempre con el skill sdd-pair (/sdd-pair en Claude Code,
-  $sdd-pair en Codex), nunca con /opsx:apply. Cuando un flujo indique el siguiente paso para
-  implementar, nombra /sdd-pair en lugar de /opsx:apply.
+  Implementación: se puede implementar con el skill sdd-pair (/sdd-pair en Claude Code,
+  $sdd-pair en Codex: TDD supervisado, una tarea cada vez) o con /opsx:apply (flujo por defecto
+  de OpenSpec). Cuando un flujo indique el siguiente paso para implementar, ofrece las dos opciones.
 
   Verificación: /opsx:verify debe compilar el proyecto de forma explícita como PRIMER paso
   (script build de package.json, ng build, mvn compile…). Si la compilación falla, cada error
@@ -27,16 +27,3 @@ rules:
     - Las specs describen reglas de negocio observables, nunca clases, métodos ni frameworks
   tasks:
     - Cada tarea es un incremento de comportamiento pequeño (un ciclo TDD), nunca una capa técnica
-
-# Red de seguridad por si alguien usa /opsx:apply en lugar de /sdd-pair.
-operations:
-  apply:
-    guidance:
-      - Implement only ONE pending task per run, one TDD cycle at a time (red → minimum code → green), then stop and wait for approval
-      - List the task's tests (names + where they run) and wait for approval before writing them
-      - Stop before any design decision not covered by design.md or any behavior not in the specs
-      - Never change, skip or delete a test to make it pass; never edit specs to match the code
-      - Keep the cognitive complexity of every function written or touched at 15 or less whenever possible; if it ends up above 15, report it and propose a refactor before continuing
-      - "IMPERATIVE in Angular projects whose package.json declares test:server and karma:run: start `npm run test:server` once as a background process and keep it running all session (it never returns: never run it in the foreground or wait for it to finish; start it early, keep working, and check its log only right before the first karma:run with short ~10 s waits, never long sleeps); run only the needed tests with `npm run karma:run -- \"<test description>\"` and read the result from that command's output; never use ng test or npm test. In PowerShell start the server detached with Start-Process (not Start-Job) and use npm.cmd instead of npm so the -- reaches karma:run"
-      - Never paste code or tests into the conversation; name the files written or changed as path:line so the user reviews them in the IDE
-      - Never commit; suggest the commit message instead
